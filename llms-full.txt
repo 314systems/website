@@ -2460,6 +2460,8 @@ Use `extends` to inherit from other configuration files.
 
 Paths in `extends` are resolved relative to the configuration file that declares `extends`. Configs are merged from first to last, with later entries overriding earlier ones.
 
+Use `oxlint.config.ts` when extending config objects imported from a shared package. Package imports are not supported in the `.oxlintrc.json` format.
+
 ::: code-group
 
 ```json [.oxlintrc.json]
@@ -2479,6 +2481,17 @@ export default defineConfig({
 ```
 
 :::
+
+For example, a shared package can export a config object that you import and extend:
+
+```ts [oxlint.config.ts]
+import config from "@example-org/oxlint-config";
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
+  extends: [config],
+});
+```
 
 ## Configure environments and globals
 
@@ -33290,9 +33303,11 @@ This keeps the shared baseline in one place and makes package configs small and 
 
 ## Extending configuration files
 
-A config can reuse settings from other files using `extends`. The value is an array of file paths, resolved relative to the config file that declares them.
+A config can reuse settings from other configs using `extends`.
 
-Extended files can have any name. They do not need to be named `.oxlintrc.json`, as long as they are valid JSON configuration files. For `oxlint.config.ts`, the file with the `extends` property must be named `oxlint.config.ts`.
+In `.oxlintrc.json`, `extends` is an array of file paths, resolved relative to the config file that declares them. Extended files can have any name. They do not need to be named `.oxlintrc.json`, as long as they are valid JSON configuration files. Package imports are not supported in the `.oxlintrc.json` format.
+
+In `oxlint.config.ts`, import the config objects you want to extend and pass them to `extends`. The file with the `extends` property must be named `oxlint.config.ts`. Use `oxlint.config.ts` when extending config objects imported from a shared package.
 
 Example:
 
@@ -33344,6 +33359,17 @@ export default defineConfig({
 ```
 
 :::
+
+Shared packages work the same way in `oxlint.config.ts`:
+
+```ts [oxlint.config.ts]
+import sharedConfig from "@example-org/oxlint-config";
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
+  extends: [sharedConfig],
+});
+```
 
 Only some properties can be extended. The supported properties are:
 
@@ -41446,179 +41472,6 @@ This rule was added in v0.7.1.
 ---
 
 ---
-url: /docs/guide/usage/formatter/quickstart.md
-description: Install Oxfmt and learn the common workflows.
----
-
-# Quickstart
-
-Recommended setup and common workflows.
-
-## Install
-
-Install `oxfmt` as a dev dependency:
-
-::: code-group
-
-```sh [npm]
-$ npm add -D oxfmt
-```
-
-```sh [pnpm]
-$ pnpm add -D oxfmt
-```
-
-```sh [yarn]
-$ yarn add -D oxfmt
-```
-
-```sh [bun]
-$ bun add -D oxfmt
-```
-
-:::
-
-Add scripts to `package.json`:
-
-```json [package.json]
-{
-  "scripts": {
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
-  }
-}
-```
-
-Format files:
-
-::: code-group
-
-```sh [npm]
-npm run fmt
-```
-
-```sh [pnpm]
-pnpm run fmt
-```
-
-```sh [yarn]
-yarn run fmt
-```
-
-```sh [bun]
-bun run fmt
-```
-
-:::
-
-Check formatting without writing files:
-
-::: code-group
-
-```sh [npm]
-npm run fmt:check
-```
-
-```sh [pnpm]
-pnpm run fmt:check
-```
-
-```sh [yarn]
-yarn run fmt:check
-```
-
-```sh [bun]
-bun run fmt:check
-```
-
-:::
-
-## Usage
-
-```sh
-oxfmt [OPTIONS] [PATH]...
-```
-
-Running `oxfmt` without arguments formats the current directory (equivalent to `prettier --write .`).
-
-CLI options like `--no-semi` are not supported. Use the configuration file instead to ensure consistent settings across CLI and editor integrations.
-
-To use glob patterns in positional paths, be sure to quote them. Otherwise, they may or may not be expanded depending on your environment.
-
-For the complete list of options, see the [CLI reference](/docs/guide/usage/formatter/cli.html).
-
-## Common workflows
-
-### Pre-commit with lint-staged
-
-```json [package.json]
-{
-  "lint-staged": {
-    "*": "oxfmt --no-error-on-unmatched-pattern"
-  }
-}
-```
-
-`--no-error-on-unmatched-pattern` prevents errors when no files match the pattern.
-
-### Create a config file
-
-Initialize `.oxfmtrc.json` with defaults:
-
-```sh
-oxfmt --init
-```
-
-### Migrate from Prettier
-
-```sh
-oxfmt --migrate prettier
-```
-
-See [migrate from prettier](./migrate-from-prettier) for details.
-
-### List files that differ
-
-```sh
-oxfmt --list-different
-```
-
-This is useful for configuring [files to ignore](./ignore-files).
-
-### Piping file contents
-
-```sh
-echo 'const   x   =   1' | oxfmt --stdin-filepath test.ts
-```
-
-Prints `const x = 1;`
-
-### Node.js API
-
-```ts
-import { format, type FormatOptions } from "oxfmt";
-
-const input = `let a=42;`;
-const options: FormatOptions = {
-  semi: false,
-};
-
-const { code } = await format("a.js", input, options);
-console.log(code); // "let a = 42"
-```
-
-## Next steps
-
-* [Change configuration](./config)
-* [Setup editors](./editors)
-* [Setup CI](./ci)
-* Learn advanced features: [sorting](./sorting), [embedded formatting](./embedded-formatting)
-* [Compatibility matrix](/compatibility)
-* Check [CLI reference](./cli)
-
----
-
----
 url: /docs/guide/usage/linter/quickstart.md
 description: Install Oxlint and learn the common workflows.
 ---
@@ -41881,6 +41734,179 @@ The full list is in the [Rules reference](/docs/guide/usage/linter/rules).
 * Migrate: [From ESLint](/docs/guide/usage/linter/migrate-from-eslint)&#x20;
 * [Compatibility matrix](/compatibility)
 * [CLI reference](/docs/guide/usage/linter/cli)
+
+---
+
+---
+url: /docs/guide/usage/formatter/quickstart.md
+description: Install Oxfmt and learn the common workflows.
+---
+
+# Quickstart
+
+Recommended setup and common workflows.
+
+## Install
+
+Install `oxfmt` as a dev dependency:
+
+::: code-group
+
+```sh [npm]
+$ npm add -D oxfmt
+```
+
+```sh [pnpm]
+$ pnpm add -D oxfmt
+```
+
+```sh [yarn]
+$ yarn add -D oxfmt
+```
+
+```sh [bun]
+$ bun add -D oxfmt
+```
+
+:::
+
+Add scripts to `package.json`:
+
+```json [package.json]
+{
+  "scripts": {
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
+  }
+}
+```
+
+Format files:
+
+::: code-group
+
+```sh [npm]
+npm run fmt
+```
+
+```sh [pnpm]
+pnpm run fmt
+```
+
+```sh [yarn]
+yarn run fmt
+```
+
+```sh [bun]
+bun run fmt
+```
+
+:::
+
+Check formatting without writing files:
+
+::: code-group
+
+```sh [npm]
+npm run fmt:check
+```
+
+```sh [pnpm]
+pnpm run fmt:check
+```
+
+```sh [yarn]
+yarn run fmt:check
+```
+
+```sh [bun]
+bun run fmt:check
+```
+
+:::
+
+## Usage
+
+```sh
+oxfmt [OPTIONS] [PATH]...
+```
+
+Running `oxfmt` without arguments formats the current directory (equivalent to `prettier --write .`).
+
+CLI options like `--no-semi` are not supported. Use the configuration file instead to ensure consistent settings across CLI and editor integrations.
+
+To use glob patterns in positional paths, be sure to quote them. Otherwise, they may or may not be expanded depending on your environment.
+
+For the complete list of options, see the [CLI reference](/docs/guide/usage/formatter/cli.html).
+
+## Common workflows
+
+### Pre-commit with lint-staged
+
+```json [package.json]
+{
+  "lint-staged": {
+    "*": "oxfmt --no-error-on-unmatched-pattern"
+  }
+}
+```
+
+`--no-error-on-unmatched-pattern` prevents errors when no files match the pattern.
+
+### Create a config file
+
+Initialize `.oxfmtrc.json` with defaults:
+
+```sh
+oxfmt --init
+```
+
+### Migrate from Prettier
+
+```sh
+oxfmt --migrate prettier
+```
+
+See [migrate from prettier](./migrate-from-prettier) for details.
+
+### List files that differ
+
+```sh
+oxfmt --list-different
+```
+
+This is useful for configuring [files to ignore](./ignore-files).
+
+### Piping file contents
+
+```sh
+echo 'const   x   =   1' | oxfmt --stdin-filepath test.ts
+```
+
+Prints `const x = 1;`
+
+### Node.js API
+
+```ts
+import { format, type FormatOptions } from "oxfmt";
+
+const input = `let a=42;`;
+const options: FormatOptions = {
+  semi: false,
+};
+
+const { code } = await format("a.js", input, options);
+console.log(code); // "let a = 42"
+```
+
+## Next steps
+
+* [Change configuration](./config)
+* [Setup editors](./editors)
+* [Setup CI](./ci)
+* Learn advanced features: [sorting](./sorting), [embedded formatting](./embedded-formatting)
+* [Compatibility matrix](/compatibility)
+* Check [CLI reference](./cli)
 
 ---
 
@@ -46582,153 +46608,6 @@ Upon visit, we can call `enter_scope` and `leave_scope` accordingly to build the
 ---
 
 ---
-url: /docs/guide/usage/formatter/ci.md
-description: Run Oxfmt in CI or as a git hook.
----
-
-# Setup CI and other integrations
-
-You can - and should - set up your CI pipeline to run Oxfmt and fail the build on formatting differences.
-
-This page also covers other integrations you may want to include, like git pre-commit hooks.
-
-## CI
-
-### GitHub Actions
-
-First, add a `fmt:check` script to your `package.json` if you don't have one already:
-
-```json [package.json]
-{
-  "scripts": {
-    "fmt:check": "oxfmt --check"
-  }
-}
-```
-
-And then add a job to your GitHub Actions workflow:
-
-```yaml [.github/workflows/ci.yml]
-name: CI
-
-on:
-  pull_request:
-  push:
-    branches: [main]
-
-permissions: {}
-
-jobs:
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
-          cache: pnpm
-
-      # Or yarn, npm, etc.
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run fmt:check
-```
-
-#### Autofix formatting issues
-
-If you find that you often forget to run Oxfmt before opening PRs, and don't or can't use pre-commit hooks, you can add an autofix step to your CI workflow using [autofix.ci](https://autofix.ci).
-
-See <https://autofix.ci/setup> for more details, you will need to install the relevant GitHub App as well.
-
-Below is an example GitHub Actions workflow you can use:
-
-```yaml [.github/workflows/autofix.yml]
-name: autofix.ci # needs to use this name
-
-on:
-  pull_request:
-  push:
-    branches: ["main"]
-
-permissions:
-  contents: read
-
-jobs:
-  autofix:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
-          cache: pnpm
-
-      # Or yarn, npm, etc.
-      - run: pnpm install --frozen-lockfile
-
-      # Run oxfmt to write changes, autofix.ci will commit them if there are any differences.
-      # Be sure to add a `fmt` script to your `package.json` if you haven't already.
-      - run: pnpm run fmt
-
-      # NOTE: It is strongly recommended to use the latest SHA hash for this action instead of the version number. (See https://autofix.ci/setup for more details.)
-      - uses: autofix-ci/action@1.3.2
-```
-
-### GitLab CI
-
-If you use GitLab CI, you can set up Oxfmt to enforce code formatting as part of your CI pipeline.
-
-First, add a `fmt:check` script to your `package.json` if you don't have one already:
-
-```json [package.json]
-{
-  "scripts": {
-    "fmt:check": "oxfmt --check"
-  }
-}
-```
-
-And then add a job to your `.gitlab-ci.yml`, to check that all code is formatted correctly:
-
-```yml [.gitlab-ci.yml]
-oxfmt:
-  image: node:lts
-  stage: test
-  before_script:
-    # Or pnpm, yarn, etc.
-    - npm install
-  script:
-    - npm run fmt:check
-```
-
-You may also want to add caching for your package manager to speed up installs.
-
-## Pre-commit hook
-
-To auto-format staged files, use `oxfmt --no-error-on-unmatched-pattern`. This formats all supported files and avoids errors when no files match (e.g., only Ruby files are staged).
-
-Use `--check` to verify formatting without writing files.
-
-For [lint-staged](https://npmx.dev/package/lint-staged), add to `package.json`:
-
-```json [package.json]
-{
-  "lint-staged": {
-    "*": "oxfmt --no-error-on-unmatched-pattern"
-  }
-}
-```
-
-To automatically install the git hook when installing dependencies, considering also using [husky](https://typicode.github.io/husky/get-started.html).
-
----
-
----
 url: /docs/guide/usage/linter/ci.md
 description: Run Oxlint in CI or as a git hook.
 ---
@@ -46875,152 +46754,149 @@ A Vite plugin is supported via a [third-party package](https://npmx.dev/package/
 ---
 
 ---
-url: /docs/guide/usage/linter/editors.md
-description: 'Configure Oxlint in VS Code, Zed, JetBrains, and other editors.'
+url: /docs/guide/usage/formatter/ci.md
+description: Run Oxfmt in CI or as a git hook.
 ---
 
-# Setup editors
+# Setup CI and other integrations
 
-Editor extensions use `oxlint --lsp` from your project, so `oxlint` must be installed locally.
+You can - and should - set up your CI pipeline to run Oxfmt and fail the build on formatting differences.
 
-See [Quickstart](./quickstart) to install Oxlint.
+This page also covers other integrations you may want to include, like git pre-commit hooks.
 
-## Supported editors
+## CI
 
-* [VS Code](#vs-code) (and Cursor, etc.)
-* [Zed](#zed)
-* [JetBrains](#jetbrains)
-* [Neovim](#neovim)
-* [Other editors](#other-editors)
+### GitHub Actions
 
-## VS Code
+First, add a `fmt:check` script to your `package.json` if you don't have one already:
 
-### Install
-
-Download the official Oxc VS Code extension from:
-
-* [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
-* [Open VSX Registry](https://open-vsx.org/extension/oxc/oxc-vscode)
-
-**The extension is compatible with other VS Code-based editors**, including Cursor.
-
-### Team setup
-
-1. Recommend the extension for contributors:
-
-`.vscode/extensions.json`:
-
-```json [.vscode/extensions.json]
+```json [package.json]
 {
-  "recommendations": ["oxc.oxc-vscode"]
-}
-```
-
-2. Enable fix-on-save in `.vscode/settings.json`:
-
-```json [.vscode/settings.json]
-{
-  "editor.codeActionsOnSave": {
-    "source.fixAll.oxc": "always"
+  "scripts": {
+    "fmt:check": "oxfmt --check"
   }
 }
 ```
 
-3. Enable type-aware linting (optional):
+And then add a job to your GitHub Actions workflow:
 
-To enable it for the whole project, set it in the root Oxlint config:
+```yaml [.github/workflows/ci.yml]
+name: CI
 
-::: code-group
+on:
+  pull_request:
+  push:
+    branches: [main]
 
-```json [.oxlintrc.json]
+permissions: {}
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      # Or yarn, npm, etc.
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run fmt:check
+```
+
+#### Autofix formatting issues
+
+If you find that you often forget to run Oxfmt before opening PRs, and don't or can't use pre-commit hooks, you can add an autofix step to your CI workflow using [autofix.ci](https://autofix.ci).
+
+See <https://autofix.ci/setup> for more details, you will need to install the relevant GitHub App as well.
+
+Below is an example GitHub Actions workflow you can use:
+
+```yaml [.github/workflows/autofix.yml]
+name: autofix.ci # needs to use this name
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      # Or yarn, npm, etc.
+      - run: pnpm install --frozen-lockfile
+
+      # Run oxfmt to write changes, autofix.ci will commit them if there are any differences.
+      # Be sure to add a `fmt` script to your `package.json` if you haven't already.
+      - run: pnpm run fmt
+
+      # NOTE: It is strongly recommended to use the latest SHA hash for this action instead of the version number. (See https://autofix.ci/setup for more details.)
+      - uses: autofix-ci/action@1.3.2
+```
+
+### GitLab CI
+
+If you use GitLab CI, you can set up Oxfmt to enforce code formatting as part of your CI pipeline.
+
+First, add a `fmt:check` script to your `package.json` if you don't have one already:
+
+```json [package.json]
 {
-  "options": {
-    "typeAware": true
+  "scripts": {
+    "fmt:check": "oxfmt --check"
   }
 }
 ```
 
-```ts [oxlint.config.ts]
-import { defineConfig } from "oxlint";
+And then add a job to your `.gitlab-ci.yml`, to check that all code is formatted correctly:
 
-export default defineConfig({
-  options: {
-    typeAware: true,
-  },
-});
+```yml [.gitlab-ci.yml]
+oxfmt:
+  image: node:lts
+  stage: test
+  before_script:
+    # Or pnpm, yarn, etc.
+    - npm install
+  script:
+    - npm run fmt:check
 ```
 
-:::
+You may also want to add caching for your package manager to speed up installs.
 
-Or set it in `.vscode/settings.json`:
+## Pre-commit hook
 
-```json [.vscode/settings.json]
+To auto-format staged files, use `oxfmt --no-error-on-unmatched-pattern`. This formats all supported files and avoids errors when no files match (e.g., only Ruby files are staged).
+
+Use `--check` to verify formatting without writing files.
+
+For [lint-staged](https://npmx.dev/package/lint-staged), add to `package.json`:
+
+```json [package.json]
 {
-  "oxc.typeAware": true
+  "lint-staged": {
+    "*": "oxfmt --no-error-on-unmatched-pattern"
+  }
 }
 ```
 
-When `oxc.typeAware` is unset, the editor uses the root config's `options.typeAware` value. When set explicitly, it overrides the config value.
-
-You also need to ensure `oxlint-tsgolint` is installed in your project. See [the type-aware linting docs](/docs/guide/usage/linter/type-aware) for more details.
-
-### Reference
-
-* [oxc-project/oxc-vscode](https://github.com/oxc-project/oxc-vscode)
-
-## Zed
-
-### Install
-
-* [Oxc Zed Extension](https://zed.dev/extensions/oxc)
-
-### Reference
-
-* [oxc-project/oxc-zed](https://github.com/oxc-project/oxc-zed)
-
-## JetBrains
-
-IntelliJ IDEA and WebStorm.
-
-### Install
-
-* [Oxc in JetBrains Marketplace](https://plugins.jetbrains.com/plugin/27061-oxc)
-
-### Reference
-
-* [oxc-project/oxc-intellij-plugin](https://github.com/oxc-project/oxc-intellij-plugin)
-
-## Neovim
-
-### nvim-lspconfig
-
-```sh
-npm i -g oxlint
-```
-
-```lua
-vim.lsp.enable('oxlint')
-```
-
-* [nvim-lspconfig: oxlint](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#oxlint)
-
-### coc.nvim
-
-```vim
-:CocInstall coc-oxc
-```
-
-* [oxc-project/coc-oxc](https://github.com/oxc-project/coc-oxc)
-
-## Other editors
-
-For editors with LSP support (Emacs, Helix, Sublime), you can use `oxlint --lsp` as your language server.
-To configure it, refer to the [LSP configuration reference](./lsp-config-reference.md) for the supported options.
-
-## Reference
-
-* [oxc\_language\_server](https://github.com/oxc-project/oxc/tree/main/crates/oxc_language_server)
-* [LSP configuration reference](/docs/guide/usage/linter/lsp-config-reference.md)
+To automatically install the git hook when installing dependencies, considering also using [husky](https://typicode.github.io/husky/get-started.html).
 
 ---
 
@@ -47173,6 +47049,156 @@ cat foo/bar.js | oxfmt --stdin-filepath dummy.js --config ./path/to/config.json
 ## Reference
 
 * [oxc\_language\_server](https://github.com/oxc-project/oxc/tree/main/crates/oxc_language_server)
+
+---
+
+---
+url: /docs/guide/usage/linter/editors.md
+description: 'Configure Oxlint in VS Code, Zed, JetBrains, and other editors.'
+---
+
+# Setup editors
+
+Editor extensions use `oxlint --lsp` from your project, so `oxlint` must be installed locally.
+
+See [Quickstart](./quickstart) to install Oxlint.
+
+## Supported editors
+
+* [VS Code](#vs-code) (and Cursor, etc.)
+* [Zed](#zed)
+* [JetBrains](#jetbrains)
+* [Neovim](#neovim)
+* [Other editors](#other-editors)
+
+## VS Code
+
+### Install
+
+Download the official Oxc VS Code extension from:
+
+* [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
+* [Open VSX Registry](https://open-vsx.org/extension/oxc/oxc-vscode)
+
+**The extension is compatible with other VS Code-based editors**, including Cursor.
+
+### Team setup
+
+1. Recommend the extension for contributors:
+
+`.vscode/extensions.json`:
+
+```json [.vscode/extensions.json]
+{
+  "recommendations": ["oxc.oxc-vscode"]
+}
+```
+
+2. Enable fix-on-save in `.vscode/settings.json`:
+
+```json [.vscode/settings.json]
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "always"
+  }
+}
+```
+
+3. Enable type-aware linting (optional):
+
+To enable it for the whole project, set it in the root Oxlint config:
+
+::: code-group
+
+```json [.oxlintrc.json]
+{
+  "options": {
+    "typeAware": true
+  }
+}
+```
+
+```ts [oxlint.config.ts]
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
+  options: {
+    typeAware: true,
+  },
+});
+```
+
+:::
+
+Or set it in `.vscode/settings.json`:
+
+```json [.vscode/settings.json]
+{
+  "oxc.typeAware": true
+}
+```
+
+When `oxc.typeAware` is unset, the editor uses the root config's `options.typeAware` value. When set explicitly, it overrides the config value.
+
+You also need to ensure `oxlint-tsgolint` is installed in your project. See [the type-aware linting docs](/docs/guide/usage/linter/type-aware) for more details.
+
+### Reference
+
+* [oxc-project/oxc-vscode](https://github.com/oxc-project/oxc-vscode)
+
+## Zed
+
+### Install
+
+* [Oxc Zed Extension](https://zed.dev/extensions/oxc)
+
+### Reference
+
+* [oxc-project/oxc-zed](https://github.com/oxc-project/oxc-zed)
+
+## JetBrains
+
+IntelliJ IDEA and WebStorm.
+
+### Install
+
+* [Oxc in JetBrains Marketplace](https://plugins.jetbrains.com/plugin/27061-oxc)
+
+### Reference
+
+* [oxc-project/oxc-intellij-plugin](https://github.com/oxc-project/oxc-intellij-plugin)
+
+## Neovim
+
+### nvim-lspconfig
+
+```sh
+npm i -g oxlint
+```
+
+```lua
+vim.lsp.enable('oxlint')
+```
+
+* [nvim-lspconfig: oxlint](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#oxlint)
+
+### coc.nvim
+
+```vim
+:CocInstall coc-oxc
+```
+
+* [oxc-project/coc-oxc](https://github.com/oxc-project/coc-oxc)
+
+## Other editors
+
+For editors with LSP support (Emacs, Helix, Sublime), you can use `oxlint --lsp` as your language server.
+To configure it, refer to the [LSP configuration reference](./lsp-config-reference.md) for the supported options.
+
+## Reference
+
+* [oxc\_language\_server](https://github.com/oxc-project/oxc/tree/main/crates/oxc_language_server)
+* [LSP configuration reference](/docs/guide/usage/linter/lsp-config-reference.md)
 
 ---
 
