@@ -21605,6 +21605,44 @@ The Oxc formatter is built around the same core concepts as Prettier but with si
 ---
 
 ---
+url: /docs/guide/introduction.md
+---
+
+# Getting Started
+
+[What is Oxc?](/docs/guide/what-is-oxc)
+
+## Lint or format a codebase
+
+* Lint: [Oxlint](/docs/guide/usage/linter)
+* Format: [Oxfmt](/docs/guide/usage/formatter)
+
+## Build tooling on top of Oxc
+
+* Parse JavaScript and TypeScript: [Parser](/docs/guide/usage/parser)
+* Transform TypeScript, JSX, and modern JavaScript: [Transformer](/docs/guide/usage/transformer)
+* Minify JavaScript for production builds: [Minifier](/docs/guide/usage/minifier)
+* Resolve modules for JavaScript and TypeScript: [Resolver](/docs/guide/usage/resolver)
+
+## Contribute or learn
+
+* [Contribute](/docs/contribute/introduction)
+* [Learn](/docs/learn/parser_in_rust/intro)
+
+## Other resources
+
+* [Troubleshooting](/docs/guide/troubleshooting)
+* [Benchmarks](/docs/guide/benchmarks)
+* [Projects using Oxc](/docs/guide/projects)
+* [Talks and media](/docs/guide/media)
+* [Team](/team)
+* [Endorsements](/endorsements)
+* [Release Blog](/blog/)
+* [Releases](https://github.com/oxc-project/oxc/releases)
+
+---
+
+---
 url: /docs/contribute/development.md
 ---
 
@@ -21685,44 +21723,6 @@ macOS has an antivirus feature called XProtect that scans executables for malwar
 **Note:** This disables an OS security feature. Only do this if you're comfortable with the trade-off.
 
 More details: https://nnethercote.github.io/2025/09/04/faster-rust-builds-on-mac.html
-
----
-
----
-url: /docs/guide/introduction.md
----
-
-# Getting Started
-
-[What is Oxc?](/docs/guide/what-is-oxc)
-
-## Lint or format a codebase
-
-* Lint: [Oxlint](/docs/guide/usage/linter)
-* Format: [Oxfmt](/docs/guide/usage/formatter)
-
-## Build tooling on top of Oxc
-
-* Parse JavaScript and TypeScript: [Parser](/docs/guide/usage/parser)
-* Transform TypeScript, JSX, and modern JavaScript: [Transformer](/docs/guide/usage/transformer)
-* Minify JavaScript for production builds: [Minifier](/docs/guide/usage/minifier)
-* Resolve modules for JavaScript and TypeScript: [Resolver](/docs/guide/usage/resolver)
-
-## Contribute or learn
-
-* [Contribute](/docs/contribute/introduction)
-* [Learn](/docs/learn/parser_in_rust/intro)
-
-## Other resources
-
-* [Troubleshooting](/docs/guide/troubleshooting)
-* [Benchmarks](/docs/guide/benchmarks)
-* [Projects using Oxc](/docs/guide/projects)
-* [Talks and media](/docs/guide/media)
-* [Team](/team)
-* [Endorsements](/endorsements)
-* [Release Blog](/blog/)
-* [Releases](https://github.com/oxc-project/oxc/releases)
 
 ---
 
@@ -64426,6 +64426,101 @@ url: /docs/guide/usage/formatter/generated-cli.md
 ---
 
 ---
+url: /docs/guide/usage/linter/generated-lsp-config.md
+---
+
+These options can be defined for each workspace folder separately.
+File references in the options (e.g. `configPath`, `tsConfigPath`) are resolved relative to the workspace folder.
+
+They can be sent by the client in `initialize` or `workspace/didChangeConfiguration` requests.
+If the client supports `workspace/configuration`, the server will request the options from the client.
+
+Example of `initialize` request:
+
+```json
+{
+  "processId": 123,
+  "rootUri": null,
+  "workspaceFolders": [],
+  "capabilities": {},
+  "initializationOptions": [
+    {
+      "workspaceUri": "file:///home/user/project",
+      "options": {
+        "unusedDisableDirectives": "deny",
+        "typeAware": true
+      }
+    }
+  ]
+}
+```
+
+Example of `workspace/didChangeConfiguration` request:
+
+```json
+{
+  "settings": [
+    {
+      "workspaceUri": "file:///home/user/project",
+      "options": {
+        "unusedDisableDirectives": "deny",
+        "disableNestedConfig": true
+      }
+    }
+  ]
+}
+```
+
+## configPath
+
+type: `string`
+
+Path to the config file. Similar to `--config` CLI option.
+If set, it disables searching for config files.
+
+## disableNestedConfig
+
+type: `boolean`
+
+Whether to disable nested config support. Similar to `--disable-nested-config` CLI option.
+It gets automatically enabled when `configPath` is set.
+
+## fixKind
+
+type: `"safe_fix" | "safe_fix_or_suggestion" | "dangerous_fix" | "dangerous_fix_or_suggestion" | "none" | "all"`
+
+What kind of fixes to generate for code actions.
+
+## run
+
+type: `"onSave" | "onType"`
+
+If your editor does not support `textDocument/diagnostic`,
+this option handles when diagnostics are sent to the client.
+
+## tsConfigPath
+
+type: `string`
+
+Path to the tsconfig file. Similar to `--tsconfig` CLI option.
+If set, it disables auto discovery for tsconfig files.
+
+## typeAware
+
+type: `boolean`
+
+Whether to enable/disable type-aware linting.
+It will override the root config's `typeAware` option if set.
+
+## unusedDisableDirectives
+
+type: `"allow" | "warn" | "deny"`
+
+How to handle unused disable directives. By default, they are allowed and ignored.
+
+---
+
+---
 url: /docs/guide/usage/linter/generated-cli.md
 ---
 
@@ -64584,101 +64679,6 @@ Arguments:
   Prints help information
 * **`-V`**, **`--version`** —
   Prints version information
-
----
-
----
-url: /docs/guide/usage/linter/generated-lsp-config.md
----
-
-These options can be defined for each workspace folder separately.
-File references in the options (e.g. `configPath`, `tsConfigPath`) are resolved relative to the workspace folder.
-
-They can be sent by the client in `initialize` or `workspace/didChangeConfiguration` requests.
-If the client supports `workspace/configuration`, the server will request the options from the client.
-
-Example of `initialize` request:
-
-```json
-{
-  "processId": 123,
-  "rootUri": null,
-  "workspaceFolders": [],
-  "capabilities": {},
-  "initializationOptions": [
-    {
-      "workspaceUri": "file:///home/user/project",
-      "options": {
-        "unusedDisableDirectives": "deny",
-        "typeAware": true
-      }
-    }
-  ]
-}
-```
-
-Example of `workspace/didChangeConfiguration` request:
-
-```json
-{
-  "settings": [
-    {
-      "workspaceUri": "file:///home/user/project",
-      "options": {
-        "unusedDisableDirectives": "deny",
-        "disableNestedConfig": true
-      }
-    }
-  ]
-}
-```
-
-## configPath
-
-type: `string`
-
-Path to the config file. Similar to `--config` CLI option.
-If set, it disables searching for config files.
-
-## disableNestedConfig
-
-type: `boolean`
-
-Whether to disable nested config support. Similar to `--disable-nested-config` CLI option.
-It gets automatically enabled when `configPath` is set.
-
-## fixKind
-
-type: `"safe_fix" | "safe_fix_or_suggestion" | "dangerous_fix" | "dangerous_fix_or_suggestion" | "none" | "all"`
-
-What kind of fixes to generate for code actions.
-
-## run
-
-type: `"onSave" | "onType"`
-
-If your editor does not support `textDocument/diagnostic`,
-this option handles when diagnostics are sent to the client.
-
-## tsConfigPath
-
-type: `string`
-
-Path to the tsconfig file. Similar to `--tsconfig` CLI option.
-If set, it disables auto discovery for tsconfig files.
-
-## typeAware
-
-type: `boolean`
-
-Whether to enable/disable type-aware linting.
-It will override the root config's `typeAware` option if set.
-
-## unusedDisableDirectives
-
-type: `"allow" | "warn" | "deny"`
-
-How to handle unused disable directives. By default, they are allowed and ignored.
 
 ---
 
