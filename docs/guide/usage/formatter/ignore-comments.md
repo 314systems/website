@@ -1,6 +1,7 @@
 ---
 url: /docs/guide/usage/formatter/ignore-comments.md
 ---
+
 # Inline ignore comments
 
 For JS/TS files, use `oxfmt-ignore` to skip formatting the next statement:

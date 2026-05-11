@@ -1,6 +1,7 @@
 ---
 url: /docs/guide/usage/formatter/embedded-formatting.md
 ---
+
 # Embedded Formatting
 
 Formats code embedded in JS/TS files (CSS in template literals, GraphQL in template literals, JavaScript/TypeScript/CSS/etc in Markdown).

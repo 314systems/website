@@ -1,1 +1,0 @@
-import{p as e}from"./client.D3GJhJAN.js";var t=e;export{t};

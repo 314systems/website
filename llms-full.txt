@@ -1266,147 +1266,6 @@ Or with just `oxlint --fix` if you have type-aware linting enabled via your conf
 ---
 
 ---
-url: /docs/guide/usage/linter/plugins.md
-description: >-
-  Enable built in plugin rule sets and extend Oxlint with ESLint compatible
-  JavaScript plugins.
----
-
-# Built-in Plugins
-
-Oxlint includes built-in implementations of many popular ESLint plugin rule sets. Most rules in the `recommended` configs are already implemented, so you can get useful results without extra setup.
-
-Oxlint also supports plugins written in JavaScript with an ESLint-compatible API. See [JS Plugins](./js-plugins.md).
-
-## What a plugin means in Oxlint
-
-A plugin is a named group of rules. Enabling a plugin makes its rules available, and category flags control which rules are enabled and at what severity.
-
-If you are migrating from ESLint, plugins map to the ecosystems you already know, such as import, react, jsx-a11y, jest, unicorn, and more.
-
-## Enable a plugin
-
-It is **strongly recommended** to use a config file to enable plugins, as it makes it considerably easier to manage and share with other developers on a project.
-
-### Enable in a config file
-
-You can also enable plugins in your config file using the `plugins` field:
-
-::: code-group
-
-```json [.oxlintrc.json]
-{
-  "plugins": ["import"]
-}
-```
-
-```ts [oxlint.config.ts]
-import { defineConfig } from "oxlint";
-
-export default defineConfig({
-  plugins: ["import"],
-});
-```
-
-:::
-
-Setting `plugins` **overwrites the default plugin set**. The list should include every plugin you want enabled.
-
-### Enable with the CLI
-
-You can also enable a plugin using a `--<plugin-name>-plugin` CLI flag.
-
-Example, enable the import plugin:
-
-```bash
-oxlint --import-plugin
-```
-
-Once enabled, category flags determine what is turned on.
-
-Example, enable import plugin rules in the correctness category as errors and suspicious as warnings:
-
-```bash
-oxlint --import-plugin -D correctness -W suspicious
-```
-
-Correctness rules are enabled by default.
-
-Tip: run `oxlint --help` to see the full list of plugin flags.
-
-## Disable default plugins
-
-### Disable default plugins in a config file
-
-To disable all default plugins in a config file, set `plugins` to an empty array:
-
-::: code-group
-
-```json [.oxlintrc.json]
-{
-  "plugins": []
-}
-```
-
-```ts [oxlint.config.ts]
-import { defineConfig } from "oxlint";
-
-export default defineConfig({
-  plugins: [],
-});
-```
-
-:::
-
-This disables all default plugins and uses only the base rule set.
-
-### Disable default plugins with the CLI
-
-Several plugins are enabled by default. You can disable a default plugin with `--disable-<plugin-name>-plugin`.
-
-Example, disable unicorn:
-
-```bash
-oxlint --disable-unicorn-plugin
-```
-
-Only default plugins support being disabled. Non-default plugins can simply be omitted.
-
-## Supported plugins
-
-This table lists the built-in plugins and where they come from.
-
-| Plugin name  | Default | Source                                                                                                                                                                                                                                                         |
-| ------------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `eslint`     | Yes     | [ESLint](https://eslint.org/) core rules                                                                                                                                                                                                                       |
-| `typescript` | Yes     | TypeScript rules from [typescript-eslint](https://typescript-eslint.io/) (aka `@typescript-eslint/plugin`). Type-aware rules are available using [the type-aware mode](./type-aware.md).                                                                       |
-| `unicorn`    | Yes     | [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)                                                                                                                                                                                 |
-| `react`      | No      | [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react), [eslint-plugin-react-hooks](https://www.npmx.dev/package/eslint-plugin-react-hooks)\*, and [eslint-plugin-react-refresh](https://github.com/ArnaudBarre/eslint-plugin-react-refresh) |
-| `react-perf` | No      | [eslint-plugin-react-perf](https://github.com/cvazac/eslint-plugin-react-perf)                                                                                                                                                                                 |
-| `nextjs`     | No      | [@next/eslint-plugin-next](https://www.npmx.dev/package/@next/eslint-plugin-next)                                                                                                                                                                              |
-| `oxc`        | Yes     | Oxc-specific rules and selected rules ported from deepscan                                                                                                                                                                                                     |
-| `import`     | No      | [eslint-plugin-import](https://github.com/import-js/eslint-plugin-import) (also equivalent to [eslint-plugin-import-x](https://github.com/un-ts/eslint-plugin-import-x))                                                                                       |
-| `jsdoc`      | No      | [eslint-plugin-jsdoc](https://github.com/gajus/eslint-plugin-jsdoc)                                                                                                                                                                                            |
-| `jsx-a11y`   | No      | [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)                                                                                                                                                                                 |
-| `node`       | No      | [eslint-plugin-n](https://github.com/eslint-community/eslint-plugin-n)                                                                                                                                                                                         |
-| `promise`    | No      | [eslint-plugin-promise](https://github.com/eslint-community/eslint-plugin-promise)                                                                                                                                                                             |
-| `jest`       | No      | [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest)                                                                                                                                                                                     |
-| `vitest`     | No      | [@vitest/eslint-plugin](https://github.com/vitest-dev/eslint-plugin-vitest) aka eslint-plugin-vitest                                                                                                                                                           |
-| `vue`        | No      | [eslint-plugin-vue](https://eslint.vuejs.org/) rules that work with script tags                                                                                                                                                                                |
-
-For the current status of rule coverage, see the linter [product plan issue](https://github.com/oxc-project/oxc/issues/481). For framework and file type support, see the [compatibility matrix](/compatibility).
-
-\* eslint-plugin-react-hooks does not implement the compiler rules by default. Please check [here](https://github.com/TheAlexLichter/oxlint-react-compiler-rules) for an example on how to do this.
-
-## Adding new plugins
-
-Oxlint focuses on supporting the ecosystem through built-in plugins and ESLint-compatible JavaScript plugins. [Contributions that add rules](/docs/contribute/linter/adding-rules) to existing built-in plugins are encouraged.
-
-If you think a rule set should be implemented as a built-in plugin, please [open a GitHub discussion](https://github.com/oxc-project/oxc/discussions/new?category=feature-request) first.
-
----
-
----
 url: /docs/guide/usage/transformer/plugins.md
 ---
 # Built-in Plugins
@@ -1549,6 +1408,212 @@ import styled from "styled-components/primitives";
 
 * JSX css prop transformation
 * Custom import path handling
+
+---
+
+---
+url: /docs/guide/usage/linter/plugins.md
+description: >-
+  Enable built in plugin rule sets and extend Oxlint with ESLint compatible
+  JavaScript plugins.
+---
+
+# Built-in Plugins
+
+Oxlint includes built-in implementations of many popular ESLint plugin rule sets. Most rules in the `recommended` configs are already implemented, so you can get useful results without extra setup.
+
+Oxlint also supports plugins written in JavaScript with an ESLint-compatible API. See [JS Plugins](./js-plugins.md).
+
+## What a plugin means in Oxlint
+
+A plugin is a named group of rules. Enabling a plugin makes its rules available, and category flags control which rules are enabled and at what severity.
+
+If you are migrating from ESLint, plugins map to the ecosystems you already know, such as import, react, jsx-a11y, jest, unicorn, and more.
+
+## Enable a plugin
+
+It is **strongly recommended** to use a config file to enable plugins, as it makes it considerably easier to manage and share with other developers on a project.
+
+### Enable in a config file
+
+You can also enable plugins in your config file using the `plugins` field:
+
+::: code-group
+
+```json [.oxlintrc.json]
+{
+  "plugins": ["import"]
+}
+```
+
+```ts [oxlint.config.ts]
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
+  plugins: ["import"],
+});
+```
+
+:::
+
+Setting `plugins` **overwrites the default plugin set**. The list should include every plugin you want enabled.
+
+### Enable with the CLI
+
+You can also enable a plugin using a `--<plugin-name>-plugin` CLI flag.
+
+Example, enable the import plugin:
+
+```bash
+oxlint --import-plugin
+```
+
+Once enabled, category flags determine what is turned on.
+
+Example, enable import plugin rules in the correctness category as errors and suspicious as warnings:
+
+```bash
+oxlint --import-plugin -D correctness -W suspicious
+```
+
+Correctness rules are enabled by default.
+
+Tip: run `oxlint --help` to see the full list of plugin flags.
+
+## Disable default plugins
+
+### Disable default plugins in a config file
+
+To disable all default plugins in a config file, set `plugins` to an empty array:
+
+::: code-group
+
+```json [.oxlintrc.json]
+{
+  "plugins": []
+}
+```
+
+```ts [oxlint.config.ts]
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
+  plugins: [],
+});
+```
+
+:::
+
+This disables all default plugins and uses only the base rule set.
+
+### Disable default plugins with the CLI
+
+Several plugins are enabled by default. You can disable a default plugin with `--disable-<plugin-name>-plugin`.
+
+Example, disable unicorn:
+
+```bash
+oxlint --disable-unicorn-plugin
+```
+
+Only default plugins support being disabled. Non-default plugins can simply be omitted.
+
+## Supported plugins
+
+This table lists the built-in plugins and where they come from.
+
+| Plugin name  | Default | Source                                                                                                                                                                                                                                                         |
+| ------------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `eslint`     | Yes     | [ESLint](https://eslint.org/) core rules                                                                                                                                                                                                                       |
+| `typescript` | Yes     | TypeScript rules from [typescript-eslint](https://typescript-eslint.io/) (aka `@typescript-eslint/plugin`). Type-aware rules are available using [the type-aware mode](./type-aware.md).                                                                       |
+| `unicorn`    | Yes     | [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)                                                                                                                                                                                 |
+| `react`      | No      | [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react), [eslint-plugin-react-hooks](https://www.npmx.dev/package/eslint-plugin-react-hooks)\*, and [eslint-plugin-react-refresh](https://github.com/ArnaudBarre/eslint-plugin-react-refresh) |
+| `react-perf` | No      | [eslint-plugin-react-perf](https://github.com/cvazac/eslint-plugin-react-perf)                                                                                                                                                                                 |
+| `nextjs`     | No      | [@next/eslint-plugin-next](https://www.npmx.dev/package/@next/eslint-plugin-next)                                                                                                                                                                              |
+| `oxc`        | Yes     | Oxc-specific rules and selected rules ported from deepscan                                                                                                                                                                                                     |
+| `import`     | No      | [eslint-plugin-import](https://github.com/import-js/eslint-plugin-import) (also equivalent to [eslint-plugin-import-x](https://github.com/un-ts/eslint-plugin-import-x))                                                                                       |
+| `jsdoc`      | No      | [eslint-plugin-jsdoc](https://github.com/gajus/eslint-plugin-jsdoc)                                                                                                                                                                                            |
+| `jsx-a11y`   | No      | [eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y)                                                                                                                                                                                 |
+| `node`       | No      | [eslint-plugin-n](https://github.com/eslint-community/eslint-plugin-n)                                                                                                                                                                                         |
+| `promise`    | No      | [eslint-plugin-promise](https://github.com/eslint-community/eslint-plugin-promise)                                                                                                                                                                             |
+| `jest`       | No      | [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest)                                                                                                                                                                                     |
+| `vitest`     | No      | [@vitest/eslint-plugin](https://github.com/vitest-dev/eslint-plugin-vitest) aka eslint-plugin-vitest                                                                                                                                                           |
+| `vue`        | No      | [eslint-plugin-vue](https://eslint.vuejs.org/) rules that work with script tags                                                                                                                                                                                |
+
+For the current status of rule coverage, see the linter [product plan issue](https://github.com/oxc-project/oxc/issues/481). For framework and file type support, see the [compatibility matrix](/compatibility).
+
+\* eslint-plugin-react-hooks does not implement the compiler rules by default. Please check [here](https://github.com/TheAlexLichter/oxlint-react-compiler-rules) for an example on how to do this.
+
+## Adding new plugins
+
+Oxlint focuses on supporting the ecosystem through built-in plugins and ESLint-compatible JavaScript plugins. [Contributions that add rules](/docs/contribute/linter/adding-rules) to existing built-in plugins are encouraged.
+
+If you think a rule set should be implemented as a built-in plugin, please [open a GitHub discussion](https://github.com/oxc-project/oxc/discussions/new?category=feature-request) first.
+
+---
+
+---
+url: /docs/guide/usage/formatter/cli.md
+---
+
+# Command-line Interface
+
+## Usage
+
+**`oxfmt`** \[**`-c`**=*`PATH`*] \[*`PATH`*]...
+
+## Mode Options:
+
+* **`    --init`** —
+  Initialize `.oxfmtrc.json` with default values
+* **`    --migrate`**=*`SOURCE`* —
+  Migrate configuration to `.oxfmtrc.json` from specified source Available sources: prettier, biome
+* **`    --lsp`** —
+  Start language server protocol (LSP) server
+* **`    --stdin-filepath`**=*`PATH`* —
+  Specify the file name to use to infer which parser to use
+
+## Output Options:
+
+* **`    --write`** —
+  Format and write files in place (default)
+* **`    --check`** —
+  Check if files are formatted, also show statistics
+* **`    --list-different`** —
+  List files that would be changed
+
+## Config Options
+
+* **`-c`**, **`--config`**=*`PATH`* —
+  Path to the configuration file (.json, .jsonc, .ts, .mts, .cts, .js, .mjs, .cjs)
+* **`    --disable-nested-config`** —
+  Do not search for configuration files in subdirectories
+
+## Ignore Options
+
+* **`    --ignore-path`**=*`PATH`* —
+  Path to ignore file(s). Can be specified multiple times. If not specified, .gitignore and .prettierignore in the current directory are used.
+* **`    --with-node-modules`** —
+  Format code in node\_modules directory (skipped by default)
+
+## Runtime Options
+
+* **`    --no-error-on-unmatched-pattern`** —
+  Do not exit with error when pattern is unmatched
+* **`    --threads`**=*`INT`* —
+  Number of threads to use. Set to 1 for using only 1 CPU core.
+
+## Available positional items:
+
+* *`PATH`* —
+  Single file, path or list of paths. Glob patterns are also supported. (Be sure to quote them, otherwise your shell may expand them before passing.) Exclude patterns with `!` prefix like `'!**/fixtures/*.js'` are also supported. If not provided, current working directory is used.
+
+## Available options:
+
+* **`-h`**, **`--help`** —
+  Prints help information
+* **`-V`**, **`--version`** —
+  Prints version information
 
 ---
 
@@ -1717,67 +1782,1093 @@ Arguments:
 ---
 
 ---
-url: /docs/guide/usage/formatter/cli.md
+url: /docs/guide/usage/linter/config-file-reference.md
 ---
 
-# Command-line Interface
+# Oxlint Configuration File
 
-## Usage
+This configuration is aligned with ESLint v8's configuration schema (`eslintrc.json`).
 
-**`oxfmt`** \[**`-c`**=*`PATH`*] \[*`PATH`*]...
+Usage: `oxlint -c oxlintrc.json`
 
-## Mode Options:
+Example
 
-* **`    --init`** —
-  Initialize `.oxfmtrc.json` with default values
-* **`    --migrate`**=*`SOURCE`* —
-  Migrate configuration to `.oxfmtrc.json` from specified source Available sources: prettier, biome
-* **`    --lsp`** —
-  Start language server protocol (LSP) server
-* **`    --stdin-filepath`**=*`PATH`* —
-  Specify the file name to use to infer which parser to use
+`.oxlintrc.json`
 
-## Output Options:
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import", "typescript", "unicorn"],
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "foo": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "18.2.0"
+    },
+    "custom": {
+      "option": true
+    }
+  },
+  "rules": {
+    "eqeqeq": "warn",
+    "import/no-cycle": "error",
+    "react/self-closing-comp": [
+      "error",
+      {
+        "html": false
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.test.ts", "*.spec.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
+}
+```
 
-* **`    --write`** —
-  Format and write files in place (default)
-* **`    --check`** —
-  Check if files are formatted, also show statistics
-* **`    --list-different`** —
-  List files that would be changed
+`oxlint.config.ts`
 
-## Config Options
+```ts
+import { defineConfig } from "oxlint";
 
-* **`-c`**, **`--config`**=*`PATH`* —
-  Path to the configuration file (.json, .jsonc, .ts, .mts, .cts, .js, .mjs, .cjs)
-* **`    --disable-nested-config`** —
-  Do not search for configuration files in subdirectories
+export default defineConfig({
+  plugins: ["import", "typescript", "unicorn"],
+  env: {
+    browser: true,
+  },
+  globals: {
+    foo: "readonly",
+  },
+  settings: {
+    react: {
+      version: "18.2.0",
+    },
+    custom: { option: true },
+  },
+  rules: {
+    eqeqeq: "warn",
+    "import/no-cycle": "error",
+    "react/self-closing-comp": ["error", { html: false }],
+  },
+  overrides: [
+    {
+      files: ["*.test.ts", "*.spec.ts"],
+      rules: {
+        "@typescript-eslint/no-explicit-any": "off",
+      },
+    },
+  ],
+});
+```
 
-## Ignore Options
+## $schema
 
-* **`    --ignore-path`**=*`PATH`* —
-  Path to ignore file(s). Can be specified multiple times. If not specified, .gitignore and .prettierignore in the current directory are used.
-* **`    --with-node-modules`** —
-  Format code in node\_modules directory (skipped by default)
+type: `string`
 
-## Runtime Options
+Schema URI for editor tooling.
 
-* **`    --no-error-on-unmatched-pattern`** —
-  Do not exit with error when pattern is unmatched
-* **`    --threads`**=*`INT`* —
-  Number of threads to use. Set to 1 for using only 1 CPU core.
+## categories
 
-## Available positional items:
+type: `object`
 
-* *`PATH`* —
-  Single file, path or list of paths. Glob patterns are also supported. (Be sure to quote them, otherwise your shell may expand them before passing.) Exclude patterns with `!` prefix like `'!**/fixtures/*.js'` are also supported. If not provided, current working directory is used.
+Configure an entire category of rules all at once.
 
-## Available options:
+Rules enabled or disabled this way will be overwritten by individual rules in the `rules` field.
 
-* **`-h`**, **`--help`** —
-  Prints help information
-* **`-V`**, **`--version`** —
-  Prints version information
+Example
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "warn"
+  },
+  "rules": {
+    "eslint/no-unused-vars": "error"
+  }
+}
+```
+
+### categories.correctness
+
+### categories.nursery
+
+### categories.pedantic
+
+### categories.perf
+
+### categories.restriction
+
+### categories.style
+
+### categories.suspicious
+
+## env
+
+type: `Record<string, boolean>`
+
+Predefine global variables.
+
+Environments specify what global variables are predefined.
+Available environments:
+
+* amd - require() and define() globals.
+* applescript - AppleScript globals.
+* astro - Astro globals.
+* atomtest - Atom test globals.
+* audioworklet - AudioWorklet globals.
+* browser - browser globals.
+* builtin - Latest ECMAScript globals, equivalent to es2026.
+* commonjs - CommonJS globals and scoping.
+* embertest - Ember test globals.
+* es2015 - ECMAScript 2015 globals.
+* es2016 - ECMAScript 2016 globals.
+* es2017 - ECMAScript 2017 globals.
+* es2018 - ECMAScript 2018 globals.
+* es2019 - ECMAScript 2019 globals.
+* es2020 - ECMAScript 2020 globals.
+* es2021 - ECMAScript 2021 globals.
+* es2022 - ECMAScript 2022 globals.
+* es2023 - ECMAScript 2023 globals.
+* es2024 - ECMAScript 2024 globals.
+* es2025 - ECMAScript 2025 globals.
+* es2026 - ECMAScript 2026 globals.
+* es6 - ECMAScript 6 globals except modules.
+* greasemonkey - GreaseMonkey globals.
+* jasmine - Jasmine globals.
+* jest - Jest globals.
+* jquery - jQuery globals.
+* meteor - Meteor globals.
+* mocha - Mocha globals.
+* mongo - MongoDB globals.
+* nashorn - Java 8 Nashorn globals.
+* node - Node.js globals and scoping.
+* phantomjs - PhantomJS globals.
+* prototypejs - Prototype.js globals.
+* protractor - Protractor globals.
+* qunit - QUnit globals.
+* serviceworker - Service Worker globals.
+* shared-node-browser - Node.js and Browser common globals.
+* shelljs - ShellJS globals.
+* svelte - Svelte globals.
+* vitest - Vitest globals.
+* vue - Vue globals.
+* webextensions - WebExtensions globals.
+* worker - Web Workers globals.
+
+## extends
+
+type: `string[]`
+
+Paths of configuration files that this configuration file extends (inherits from). The files
+are resolved relative to the location of the configuration file that contains the `extends`
+property. The configuration files are merged from the first to the last, with the last file
+overriding the previous ones.
+
+## globals
+
+type: `Record<string, string>`
+
+Add or remove global variables.
+
+For each global variable, set the corresponding value equal to `"writable"`
+to allow the variable to be overwritten or `"readonly"` to disallow overwriting.
+
+Globals can be disabled by setting their value to `"off"`. For example, in
+an environment where most Es2015 globals are available but `Promise` is unavailable,
+you might use this config:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "es6": true
+  },
+  "globals": {
+    "Promise": "off"
+  }
+}
+```
+
+You may also use `"readable"` or `false` to represent `"readonly"`, and
+`"writeable"` or `true` to represent `"writable"`.
+
+## ignorePatterns
+
+type: `string[]`
+
+default: `[]`
+
+Globs to ignore during linting. These are resolved from the configuration file path.
+
+## jsPlugins
+
+type: `array`
+
+JS plugins, allows usage of ESLint plugins with Oxlint.
+
+Read more about JS plugins in
+[the docs](https://oxc.rs/docs/guide/usage/linter/js-plugins.html).
+
+Note: JS plugins are in alpha and not subject to semver.
+
+Examples:
+
+Basic usage with a local plugin path.
+
+```json
+{
+  "jsPlugins": ["./custom-plugin.js"],
+  "rules": {
+    "custom/rule-name": "warn"
+  }
+}
+```
+
+Basic usage with a TypeScript plugin and a local plugin path.
+
+TypeScript plugin files are supported in the following environments:
+
+* Deno and Bun: TypeScript files are supported natively.
+* Node.js >=22.18.0 and Node.js ^20.19.0: TypeScript files are supported natively with built-in
+  type-stripping enabled by default.
+
+For older Node.js versions, TypeScript plugins are not supported. Please use JavaScript plugins or upgrade your Node version.
+
+```json
+{
+  "jsPlugins": ["./custom-plugin.ts"],
+  "rules": {
+    "custom/rule-name": "warn"
+  }
+}
+```
+
+Using a built-in Rust plugin alongside a JS plugin with the same name
+by giving the JS plugin an alias.
+
+```json
+{
+  "plugins": ["import"],
+  "jsPlugins": [
+    {
+      "name": "import-js",
+      "specifier": "eslint-plugin-import"
+    }
+  ],
+  "rules": {
+    "import/no-cycle": "error",
+    "import-js/no-unresolved": "warn"
+  }
+}
+```
+
+### jsPlugins\[n]
+
+type: `object | string`
+
+#### jsPlugins\[n].name
+
+type: `string`
+
+Custom name/alias for the plugin.
+
+Note: The following plugin names are reserved because they are implemented natively in Rust within oxlint and cannot be used for JS plugins:
+
+* react (includes react-hooks)
+* unicorn
+* typescript (includes @typescript-eslint)
+* oxc
+* import (includes import-x)
+* jsdoc
+* jest
+* vitest
+* jsx-a11y
+* nextjs
+* react-perf
+* promise
+* node
+* vue
+* eslint
+
+If you need to use the JavaScript version of any of these plugins, provide a custom alias to avoid conflicts.
+
+#### jsPlugins\[n].specifier
+
+type: `string`
+
+Path or package name of the plugin
+
+## options
+
+type: `object`
+
+Options for the linter.
+
+### options.denyWarnings
+
+type: `boolean`
+
+Ensure warnings produce a non-zero exit code.
+
+Equivalent to passing `--deny-warnings` on the CLI.
+
+### options.maxWarnings
+
+type: `integer`
+
+Specify a warning threshold. Exits with an error status if warnings exceed this value.
+
+Equivalent to passing `--max-warnings` on the CLI.
+
+### options.reportUnusedDisableDirectives
+
+type: `"allow" | "off" | "warn" | "error" | "deny" | integer`
+
+Report unused disable directives (e.g. `// oxlint-disable-line` or `// eslint-disable-line`).
+
+Equivalent to passing `--report-unused-disable-directives-severity` on the CLI.
+CLI flags take precedence over this value when both are set.
+Only supported in the root configuration file.
+
+### options.respectEslintDisableDirectives
+
+type: `boolean`
+
+Whether oxlint should respect `eslint-disable*` and `eslint-enable*`
+directives in addition to its native `oxlint-*` directives.
+
+Defaults to `true`.
+Only supported in the root configuration file.
+
+### options.typeAware
+
+type: `boolean`
+
+Enable rules that require type information.
+
+Equivalent to passing `--type-aware` on the CLI.
+
+Note that this requires the `oxlint-tsgolint` package to be installed.
+
+### options.typeCheck
+
+type: `boolean`
+
+Enable experimental type checking (includes TypeScript compiler diagnostics).
+
+Equivalent to passing `--type-check` on the CLI.
+
+Note that this requires the `oxlint-tsgolint` package to be installed.
+
+## overrides
+
+type: `array`
+
+### overrides\[n]
+
+type: `object`
+
+#### overrides\[n].env
+
+type: `object`
+
+Environments enable and disable collections of global variables.
+
+#### overrides\[n].files
+
+type: `string[]`
+
+A set of glob patterns.
+
+#### overrides\[n].globals
+
+type: `object`
+
+Enabled or disabled specific global variables.
+
+#### overrides\[n].jsPlugins
+
+type: `array`
+
+JS plugins for this override, allows usage of ESLint plugins with Oxlint.
+
+Read more about JS plugins in
+[the docs](https://oxc.rs/docs/guide/usage/linter/js-plugins.html).
+
+Note: JS plugins are in alpha and not subject to semver.
+
+##### overrides\[n].jsPlugins\[n]
+
+type: `object | string`
+
+###### overrides\[n].jsPlugins\[n].name
+
+type: `string`
+
+Custom name/alias for the plugin.
+
+Note: The following plugin names are reserved because they are implemented natively in Rust within oxlint and cannot be used for JS plugins:
+
+* react (includes react-hooks)
+* unicorn
+* typescript (includes @typescript-eslint)
+* oxc
+* import (includes import-x)
+* jsdoc
+* jest
+* vitest
+* jsx-a11y
+* nextjs
+* react-perf
+* promise
+* node
+* vue
+* eslint
+
+If you need to use the JavaScript version of any of these plugins, provide a custom alias to avoid conflicts.
+
+###### overrides\[n].jsPlugins\[n].specifier
+
+type: `string`
+
+Path or package name of the plugin
+
+#### overrides\[n].plugins
+
+type: `array`
+
+default: `null`
+
+Optionally change what plugins are enabled for this override. When
+omitted, the base config's plugins are used.
+
+##### overrides\[n].plugins\[n]
+
+type: `"eslint" | "react" | "unicorn" | "typescript" | "oxc" | "import" | "jsdoc" | "jest" | "vitest" | "jsx-a11y" | "nextjs" | "react-perf" | "promise" | "node" | "vue"`
+
+#### overrides\[n].rules
+
+type: `object`
+
+See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html)
+
+## plugins
+
+type: `array`
+
+default: `null`
+
+Enabled built-in plugins for Oxlint.
+You can view the list of available plugins on
+[the website](https://oxc.rs/docs/guide/usage/linter/plugins.html#supported-plugins).
+
+NOTE: Setting the `plugins` field will overwrite the base set of plugins.
+The `plugins` array should reflect all of the plugins you want to use.
+
+### plugins\[n]
+
+type: `"eslint" | "react" | "unicorn" | "typescript" | "oxc" | "import" | "jsdoc" | "jest" | "vitest" | "jsx-a11y" | "nextjs" | "react-perf" | "promise" | "node" | "vue"`
+
+## rules
+
+type: `object`
+
+See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html)
+
+## settings
+
+type: `object`
+
+Configure the behavior of linter plugins.
+
+Here's an example if you're using Next.js in a monorepo:
+
+```json
+{
+  "settings": {
+    "next": {
+      "rootDir": "apps/dashboard/"
+    },
+    "react": {
+      "linkComponents": [
+        {
+          "name": "Link",
+          "linkAttribute": "to"
+        }
+      ]
+    },
+    "jsx-a11y": {
+      "components": {
+        "Link": "a",
+        "Button": "button"
+      }
+    }
+  }
+}
+```
+
+### settings.jest
+
+type: `object`
+
+Configure Jest plugin rules.
+
+See [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest)'s
+configuration for a full reference.
+
+#### settings.jest.version
+
+type: `integer | string`
+
+default: `null`
+
+Jest version — accepts a number (`29`) or a semver string (`"29.1.0"` or `"v29.1.0"`),
+storing only the major version.
+::: warning
+Using this config will override the `no-deprecated-functions` config set.
+:::
+
+### settings.jsdoc
+
+type: `object`
+
+#### settings.jsdoc.augmentsExtendsReplacesDocs
+
+type: `boolean`
+
+default: `false`
+
+Only for `require-(yields|returns|description|example|param|throws)` rule
+
+#### settings.jsdoc.exemptDestructuredRootsFromChecks
+
+type: `boolean`
+
+default: `false`
+
+Only for `require-param-type` and `require-param-description` rule
+
+#### settings.jsdoc.ignoreInternal
+
+type: `boolean`
+
+default: `false`
+
+For all rules but NOT apply to `empty-tags` rule
+
+#### settings.jsdoc.ignorePrivate
+
+type: `boolean`
+
+default: `false`
+
+For all rules but NOT apply to `check-access` and `empty-tags` rule
+
+#### settings.jsdoc.ignoreReplacesDocs
+
+type: `boolean`
+
+default: `true`
+
+Only for `require-(yields|returns|description|example|param|throws)` rule
+
+#### settings.jsdoc.implementsReplacesDocs
+
+type: `boolean`
+
+default: `false`
+
+Only for `require-(yields|returns|description|example|param|throws)` rule
+
+#### settings.jsdoc.overrideReplacesDocs
+
+type: `boolean`
+
+default: `true`
+
+Only for `require-(yields|returns|description|example|param|throws)` rule
+
+#### settings.jsdoc.tagNamePreference
+
+type: `object`
+
+default: `{}`
+
+### settings.jsx-a11y
+
+type: `object`
+
+Configure JSX A11y plugin rules.
+
+See
+[eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y#configurations)'s
+configuration for a full reference.
+
+#### settings.jsx-a11y.attributes
+
+type: `Record<string, array>`
+
+default: `{}`
+
+Map of attribute names to their DOM equivalents.
+This is useful for non-React frameworks that use different attribute names.
+
+Example:
+
+```json
+{
+  "settings": {
+    "jsx-a11y": {
+      "attributes": {
+        "for": ["htmlFor", "for"]
+      }
+    }
+  }
+}
+```
+
+#### settings.jsx-a11y.components
+
+type: `Record<string, string>`
+
+default: `{}`
+
+To have your custom components be checked as DOM elements, you can
+provide a mapping of your component names to the DOM element name.
+
+Example:
+
+```json
+{
+  "settings": {
+    "jsx-a11y": {
+      "components": {
+        "Link": "a",
+        "IconButton": "button"
+      }
+    }
+  }
+}
+```
+
+#### settings.jsx-a11y.polymorphicPropName
+
+type: `string`
+
+An optional setting that define the prop your code uses to create polymorphic components.
+This setting will be used to determine the element type in rules that
+require semantic context.
+
+For example, if you set the `polymorphicPropName` to `as`, then this element:
+
+```jsx
+<Box as="h3">Hello</Box>
+```
+
+Will be treated as an `h3`. If not set, this component will be treated
+as a `Box`.
+
+### settings.next
+
+type: `object`
+
+Configure Next.js plugin rules.
+
+#### settings.next.rootDir
+
+type: `array | string`
+
+##### settings.next.rootDir\[n]
+
+type: `string`
+
+### settings.react
+
+type: `object`
+
+Configure React plugin rules.
+
+Derived from [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react#configuration-legacy-eslintrc-)
+
+#### settings.react.componentWrapperFunctions
+
+type: `string[]`
+
+default: `[]`
+
+Functions that wrap React components and should be treated as HOCs.
+
+Example:
+
+```jsonc
+{
+  "settings": {
+    "react": {
+      "componentWrapperFunctions": ["observer", "withRouter"],
+    },
+  },
+}
+```
+
+#### settings.react.formComponents
+
+type: `array`
+
+default: `[]`
+
+Components used as alternatives to `<form>` for forms, such as `<Formik>`.
+
+Example:
+
+```jsonc
+{
+  "settings": {
+    "react": {
+      "formComponents": [
+        "CustomForm",
+        // OtherForm is considered a form component and has an endpoint attribute
+        { "name": "OtherForm", "formAttribute": "endpoint" },
+        // allows specifying multiple properties if necessary
+        { "name": "Form", "formAttribute": ["registerEndpoint", "loginEndpoint"] },
+      ],
+    },
+  },
+}
+```
+
+##### settings.react.formComponents\[n]
+
+type: `object | string`
+
+###### settings.react.formComponents\[n].attribute
+
+type: `string`
+
+###### settings.react.formComponents\[n].name
+
+type: `string`
+
+#### settings.react.linkComponents
+
+type: `array`
+
+default: `[]`
+
+Components used as alternatives to `<a>` for linking, such as `<Link>`.
+
+Example:
+
+```jsonc
+{
+  "settings": {
+    "react": {
+      "linkComponents": [
+        "HyperLink",
+        // Use `linkAttribute` for components that use a different prop name
+        // than `href`.
+        { "name": "MyLink", "linkAttribute": "to" },
+        // allows specifying multiple properties if necessary
+        { "name": "Link", "linkAttribute": ["to", "href"] },
+      ],
+    },
+  },
+}
+```
+
+##### settings.react.linkComponents\[n]
+
+type: `object | string`
+
+###### settings.react.linkComponents\[n].attribute
+
+type: `string`
+
+###### settings.react.linkComponents\[n].name
+
+type: `string`
+
+#### settings.react.version
+
+type: `string`
+
+default: `null`
+
+React version to use for version-specific rules.
+
+Accepts semver versions (e.g., "18.2.0", "17.0").
+
+Example:
+
+```jsonc
+{
+  "settings": {
+    "react": {
+      "version": "18.2.0",
+    },
+  },
+}
+```
+
+### settings.vitest
+
+type: `object`
+
+Configure Vitest plugin rules.
+
+See [eslint-plugin-vitest](https://github.com/vitest-dev/eslint-plugin-vitest)'s
+configuration for a full reference.
+
+#### settings.vitest.typecheck
+
+type: `boolean`
+
+default: `false`
+
+Whether to enable typecheck mode for Vitest rules.
+When enabled, some rules will skip certain checks for describe blocks
+to accommodate TypeScript type checking scenarios.
+
+---
+
+---
+url: /docs/guide/usage/formatter/config.md
+description: Configure Oxfmt using a .oxfmtrc.json file.
+---
+
+# Configuration
+
+Oxfmt works out of the box, but most teams commit a configuration file to keep formatting consistent across local runs, editors, and CI.
+
+This page focuses on project configuration: formatting options, ignore patterns, and experimental features.
+
+## Create a config file
+
+To generate a starter config in the current directory:
+
+```sh
+oxfmt --init
+```
+
+Oxfmt automatically looks for the following files starting from the directory of the file being formatted and walking up the tree:
+
+* `.oxfmtrc.json`
+* `.oxfmtrc.jsonc`
+* `oxfmt.config.ts`
+
+The nearest config file to each formatted file wins. This means you can place different config files at different levels of your project tree.
+For example, a root config for the whole repo and a more specific one inside a subdirectory:
+
+```
+my-repo/
+├── oxfmt.config.ts         # default for the whole repo
+├── src/
+│   └── app.ts              # uses root config
+└── packages/
+    └── fancy-app/
+        ├── .oxfmtrc.json   # overrides for this package
+        └── index.ts        # uses packages/fancy-app/.oxfmtrc.json
+```
+
+If you don't need nested config, pass `--disable-nested-config` to only look upward from the current working directory. This is faster because Oxfmt can resolve the config once instead of per file.
+
+You can also pass a config explicitly with `-c`, which also disables nested config lookup. This accepts any supported format (`.json`, `.jsonc`, `.ts`, `.mts`, `.cts`, `.js`, `.mjs`, `.cjs`):
+
+```sh
+oxfmt -c path/to/yourconfig.json
+```
+
+A minimal JSON configuration looks like this:
+
+```json [.oxfmtrc.json]
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80
+}
+```
+
+JavaScript / TypeScript config files use a default export. `defineConfig` is optional but gives you type checking and editor autocomplete:
+
+```ts [oxfmt.config.ts]
+import { defineConfig } from "oxfmt";
+
+export default defineConfig({
+  printWidth: 80,
+});
+```
+
+## Configuration file format
+
+A configuration file is a JSON object. The most common top-level fields are:
+
+* `printWidth`: Line width limit (default: 100)
+* `tabWidth`: Spaces per indentation level (default: 2)
+* `useTabs`: Use tabs instead of spaces (default: false)
+* `semi`: Add semicolons (default: true)
+* `singleQuote`: Use single quotes (default: false)
+* `trailingComma`: Trailing commas in multi-line structures (default: "all")
+* `ignorePatterns`: Glob patterns to exclude from formatting
+* `sortImports`: Configure import sorting (disabled by default)
+* `sortTailwindcss`: Configure Tailwind class sorting (disabled by default)
+* `sortPackageJson`: Configure package.json sorting (enabled by default)
+
+For a complete list of fields, see the [Config file reference](./config-file-reference).
+
+## JSON schema
+
+Add a `$schema` field for editor validation and autocomplete:
+
+```json [.oxfmtrc.json]
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json"
+}
+```
+
+## `.editorconfig`
+
+Oxfmt reads these `.editorconfig` properties:
+
+* `end_of_line` → `endOfLine`
+* `indent_style` → `useTabs`
+* `indent_size` → `tabWidth`
+* `max_line_length` → `printWidth`
+* `insert_final_newline` → `insertFinalNewline`
+
+Both root section and glob-based overrides are supported.
+
+```
+[*]
+indent_size = 4
+
+[*.{js,ts}]
+indent_size = 2
+```
+
+Oxfmt uses only the nearest `.editorconfig` from the current directory:
+
+* `root = true` is not respected
+* Nested `.editorconfig` files are not merged
+
+## Overrides
+
+Use the `overrides` field to apply different formatting options to specific files:
+
+::: code-group
+
+```json [.oxfmtrc.json]
+{
+  "printWidth": 100,
+  "overrides": [
+    {
+      "files": ["*.test.js", "*.spec.ts"],
+      "options": {
+        "printWidth": 120
+      }
+    },
+    {
+      "files": ["*.md", "*.html"],
+      "excludeFiles": ["*.min.js"],
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
+}
+```
+
+```ts [oxfmt.config.ts]
+import { defineConfig } from "oxfmt";
+
+export default defineConfig({
+  printWidth: 100,
+  overrides: [
+    {
+      files: ["*.test.js", "*.spec.ts"],
+      options: {
+        printWidth: 120,
+      },
+    },
+    {
+      files: ["*.md", "*.html"],
+      excludeFiles: ["*.min.js"],
+      options: {
+        tabWidth: 4,
+      },
+    },
+  ],
+});
+```
+
+:::
+
+Each override entry has:
+
+* `files` (required): Glob patterns to match files
+* `excludeFiles` (optional): Glob patterns to exclude from this override
+* `options`: Formatting options to apply
+
+Glob patterns are resolved relative to the directory containing the Oxfmt config file.
+
+## Precedence
+
+Options are applied in order (lowest to highest priority):
+
+1. Defaults
+2. Config file root options
+3. Config file `overrides` options
+4. fallback to options supported by `.editorconfig` for unset fields
+
+## Oxfmt-specific options
+
+### `insertFinalNewline`
+
+Controls whether a final newline is added to formatted files. Defaults to `true`.
+
+This is a [frequently requested Prettier feature](https://github.com/prettier/prettier/issues/6360), as some environments (e.g., Salesforce) strip trailing newlines.
+
+### `printWidth`
+
+Oxfmt defaults to `printWidth: 100` (Prettier uses 80). Reasons:
+
+* TypeScript code is longer due to type annotations
+* Import statements often have many specifiers
+* Modern screens are wider
+* Fewer line breaks mean fewer LLM tokens
+
+To match Prettier's default:
+
+::: code-group
+
+```json [.oxfmtrc.json]
+{
+  "printWidth": 80
+}
+```
+
+```ts [oxfmt.config.ts]
+import { defineConfig } from "oxfmt";
+
+export default defineConfig({
+  printWidth: 80,
+});
+```
+
+:::
+
+## Next steps
+
+* [Ignore files](./ignore-files): Ignore files and patterns, `.gitignore` and `.prettierignore` workflows.
+* [Inline ignore comments](./ignore-comments): Inline suppressions for specific code.
+* [Config file reference](./config-file-reference): Full schema and field documentation.
+* [CLI reference](./cli): Complete list of flags.
 
 ---
 
@@ -2359,239 +3450,6 @@ export default defineConfig({
 * [Nested configs](/docs/guide/usage/linter/nested-config): Monorepos and per-package configuration.
 * [Config file reference](/docs/guide/usage/linter/config-file-reference.html): Full schema and field documentation.
 * [CLI reference](/docs/guide/usage/linter/cli.html): Complete list of flags and output formats.
-
----
-
----
-url: /docs/guide/usage/formatter/config.md
-description: Configure Oxfmt using a .oxfmtrc.json file.
----
-
-# Configuration
-
-Oxfmt works out of the box, but most teams commit a configuration file to keep formatting consistent across local runs, editors, and CI.
-
-This page focuses on project configuration: formatting options, ignore patterns, and experimental features.
-
-## Create a config file
-
-To generate a starter config in the current directory:
-
-```sh
-oxfmt --init
-```
-
-Oxfmt automatically looks for the following files starting from the directory of the file being formatted and walking up the tree:
-
-* `.oxfmtrc.json`
-* `.oxfmtrc.jsonc`
-* `oxfmt.config.ts`
-
-The nearest config file to each formatted file wins. This means you can place different config files at different levels of your project tree.
-For example, a root config for the whole repo and a more specific one inside a subdirectory:
-
-```
-my-repo/
-├── oxfmt.config.ts         # default for the whole repo
-├── src/
-│   └── app.ts              # uses root config
-└── packages/
-    └── fancy-app/
-        ├── .oxfmtrc.json   # overrides for this package
-        └── index.ts        # uses packages/fancy-app/.oxfmtrc.json
-```
-
-If you don't need nested config, pass `--disable-nested-config` to only look upward from the current working directory. This is faster because Oxfmt can resolve the config once instead of per file.
-
-You can also pass a config explicitly with `-c`, which also disables nested config lookup. This accepts any supported format (`.json`, `.jsonc`, `.ts`, `.mts`, `.cts`, `.js`, `.mjs`, `.cjs`):
-
-```sh
-oxfmt -c path/to/yourconfig.json
-```
-
-A minimal JSON configuration looks like this:
-
-```json [.oxfmtrc.json]
-{
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "printWidth": 80
-}
-```
-
-JavaScript / TypeScript config files use a default export. `defineConfig` is optional but gives you type checking and editor autocomplete:
-
-```ts [oxfmt.config.ts]
-import { defineConfig } from "oxfmt";
-
-export default defineConfig({
-  printWidth: 80,
-});
-```
-
-## Configuration file format
-
-A configuration file is a JSON object. The most common top-level fields are:
-
-* `printWidth`: Line width limit (default: 100)
-* `tabWidth`: Spaces per indentation level (default: 2)
-* `useTabs`: Use tabs instead of spaces (default: false)
-* `semi`: Add semicolons (default: true)
-* `singleQuote`: Use single quotes (default: false)
-* `trailingComma`: Trailing commas in multi-line structures (default: "all")
-* `ignorePatterns`: Glob patterns to exclude from formatting
-* `sortImports`: Configure import sorting (disabled by default)
-* `sortTailwindcss`: Configure Tailwind class sorting (disabled by default)
-* `sortPackageJson`: Configure package.json sorting (enabled by default)
-
-For a complete list of fields, see the [Config file reference](./config-file-reference).
-
-## JSON schema
-
-Add a `$schema` field for editor validation and autocomplete:
-
-```json [.oxfmtrc.json]
-{
-  "$schema": "./node_modules/oxfmt/configuration_schema.json"
-}
-```
-
-## `.editorconfig`
-
-Oxfmt reads these `.editorconfig` properties:
-
-* `end_of_line` → `endOfLine`
-* `indent_style` → `useTabs`
-* `indent_size` → `tabWidth`
-* `max_line_length` → `printWidth`
-* `insert_final_newline` → `insertFinalNewline`
-
-Both root section and glob-based overrides are supported.
-
-```
-[*]
-indent_size = 4
-
-[*.{js,ts}]
-indent_size = 2
-```
-
-Oxfmt uses only the nearest `.editorconfig` from the current directory:
-
-* `root = true` is not respected
-* Nested `.editorconfig` files are not merged
-
-## Overrides
-
-Use the `overrides` field to apply different formatting options to specific files:
-
-::: code-group
-
-```json [.oxfmtrc.json]
-{
-  "printWidth": 100,
-  "overrides": [
-    {
-      "files": ["*.test.js", "*.spec.ts"],
-      "options": {
-        "printWidth": 120
-      }
-    },
-    {
-      "files": ["*.md", "*.html"],
-      "excludeFiles": ["*.min.js"],
-      "options": {
-        "tabWidth": 4
-      }
-    }
-  ]
-}
-```
-
-```ts [oxfmt.config.ts]
-import { defineConfig } from "oxfmt";
-
-export default defineConfig({
-  printWidth: 100,
-  overrides: [
-    {
-      files: ["*.test.js", "*.spec.ts"],
-      options: {
-        printWidth: 120,
-      },
-    },
-    {
-      files: ["*.md", "*.html"],
-      excludeFiles: ["*.min.js"],
-      options: {
-        tabWidth: 4,
-      },
-    },
-  ],
-});
-```
-
-:::
-
-Each override entry has:
-
-* `files` (required): Glob patterns to match files
-* `excludeFiles` (optional): Glob patterns to exclude from this override
-* `options`: Formatting options to apply
-
-Glob patterns are resolved relative to the directory containing the Oxfmt config file.
-
-## Precedence
-
-Options are applied in order (lowest to highest priority):
-
-1. Defaults
-2. Config file root options
-3. Config file `overrides` options
-4. fallback to options supported by `.editorconfig` for unset fields
-
-## Oxfmt-specific options
-
-### `insertFinalNewline`
-
-Controls whether a final newline is added to formatted files. Defaults to `true`.
-
-This is a [frequently requested Prettier feature](https://github.com/prettier/prettier/issues/6360), as some environments (e.g., Salesforce) strip trailing newlines.
-
-### `printWidth`
-
-Oxfmt defaults to `printWidth: 100` (Prettier uses 80). Reasons:
-
-* TypeScript code is longer due to type annotations
-* Import statements often have many specifiers
-* Modern screens are wider
-* Fewer line breaks mean fewer LLM tokens
-
-To match Prettier's default:
-
-::: code-group
-
-```json [.oxfmtrc.json]
-{
-  "printWidth": 80
-}
-```
-
-```ts [oxfmt.config.ts]
-import { defineConfig } from "oxfmt";
-
-export default defineConfig({
-  printWidth: 80,
-});
-```
-
-:::
-
-## Next steps
-
-* [Ignore files](./ignore-files): Ignore files and patterns, `.gitignore` and `.prettierignore` workflows.
-* [Inline ignore comments](./ignore-comments): Inline suppressions for specific code.
-* [Config file reference](./config-file-reference): Full schema and field documentation.
-* [CLI reference](./cli): Complete list of flags.
 
 ---
 
@@ -5658,6 +6516,7 @@ The debug process will be launched with specified `cwd`, like running linter in 
 ---
 url: /docs/guide/usage/formatter/embedded-formatting.md
 ---
+
 # Embedded Formatting
 
 Formats code embedded in JS/TS files (CSS in template literals, GraphQL in template literals, JavaScript/TypeScript/CSS/etc in Markdown).
@@ -21669,6 +22528,7 @@ let { x = 1 } = ({ x = 1 } = { x: 1 });
 ---
 url: /docs/guide/usage/formatter/ignore-files.md
 ---
+
 # Ignore files
 
 Oxfmt provides several ways to exclude files from formatting.
@@ -21847,83 +22707,6 @@ To disable all ignore behavior, including ignore files and CLI ignore options, u
 ```bash
 oxlint --no-ignore
 ```
-
----
-
----
-url: /docs/guide/usage/formatter/ignoring.md
----
-# Ignoring
-
-## Ignore files
-
-Oxfmt provides several ways to ignore files.
-
-### `.gitignore`
-
-Respects `.gitignore` in the current working directory and subdirectories.
-
-Does not respect global, exclude, or `.gitignore` in parent directories.
-Does not require `.git` directory to exist.
-
-Files listed here can still be formatted if explicitly specified.
-This is safe for use cases like `husky`, as ignored files are never staged.
-
-### `.prettierignore` / `oxfmtrc.ignorePatterns`
-
-These are formatter-specific ignore settings, separate from Git, and each operates within its own scope.
-
-`.prettierignore` is only read from the current working directory. For `.oxfmtrc.json(c)`, see [Configuration](./config).
-
-The syntax is the same as `.gitignore`, and paths are resolved relative to the directory containing the ignore file.
-
-Files ignored here cannot be formatted even if explicitly specified. This behavior is intended for use cases like `husky`.
-
-You can also specify custom ignore paths with `--ignore-path`, or use `!`-prefixed positional paths to exclude files.
-
-### VCS directories and `node_modules`
-
-Directories like `.git`, `.svn` and `.jj` are ignored by default.
-
-The `node_modules` directory is also ignored unless `--with-node_modules` flag is specified.
-
-If the current working directory is inside these directories, formatting is still possible.
-
-### Lock files
-
-Files like `package-lock.json` and `pnpm-lock.yaml` are ignored by default.
-
-These cannot be formatted even if explicitly specified.
-
-## Ignore comments
-
-For JS/TS files, you can use a `prettier-ignore` comment.
-
-This takes effect on the next statement/expression.
-
-```js
-// prettier-ignore
-const a=42;
-
-/* prettier-ignore */
-const x=()=>{return      2;}
-
-<>
-  {/* prettier-ignore */}
-  <span     ugly  format=''   />
-</>;
-```
-
-::: warning
-(Not documented, but) Prettier supports trailing ignore comment too.
-However, we don't support it to avoid a performance hit.
-Please update your code in that case.
-:::
-
-For non-JS files, the same convention as Prettier works.
-Please see Prettier's [documentation](https://prettier.io/docs/ignore#html).
-
-For TOML files, ignore comments are not supported.
 
 ---
 
@@ -24153,6 +24936,52 @@ This rule was added in v0.11.1.
 ---
 
 ---
+url: /docs/guide/usage/formatter/ignore-comments.md
+---
+
+# Inline ignore comments
+
+For JS/TS files, use `oxfmt-ignore` to skip formatting the next statement:
+
+```js
+// oxfmt-ignore
+const a    = 42;
+
+/* oxfmt-ignore */
+const x = () => { return 2; };
+
+<>
+  {/* oxfmt-ignore */}
+  <span   ugly   format=""   />
+</>;
+```
+
+For JS-in-Vue, use `oxfmt-ignore` inside the `<script>` tag:
+
+```vue
+<script>
+// oxfmt-ignore
+const a    = 42;
+</script>
+```
+
+Trailing ignore comments are also supported:
+
+```js
+const a    = 42; // oxfmt-ignore
+```
+
+For other files and non-JS parts of Vue files (e.g., `<template>`, `<style>`), use `prettier-ignore` comment. See also Prettier's [ignore documentation](https://prettier.io/docs/ignore#html).
+
+Currently, TOML files do not support ignore comments.
+
+## Prettier compatibility
+
+* `prettier-ignore` comment is also supported
+
+---
+
+---
 url: /docs/guide/usage/linter/ignore-comments.md
 description: Disable specific rules inline using Oxlint ignore comments
 ---
@@ -24263,51 +25092,6 @@ export default defineConfig({
 ```
 
 :::
-
----
-
----
-url: /docs/guide/usage/formatter/ignore-comments.md
----
-# Inline ignore comments
-
-For JS/TS files, use `oxfmt-ignore` to skip formatting the next statement:
-
-```js
-// oxfmt-ignore
-const a    = 42;
-
-/* oxfmt-ignore */
-const x = () => { return 2; };
-
-<>
-  {/* oxfmt-ignore */}
-  <span   ugly   format=""   />
-</>;
-```
-
-For JS-in-Vue, use `oxfmt-ignore` inside the `<script>` tag:
-
-```vue
-<script>
-// oxfmt-ignore
-const a    = 42;
-</script>
-```
-
-Trailing ignore comments are also supported:
-
-```js
-const a    = 42; // oxfmt-ignore
-```
-
-For other files and non-JS parts of Vue files (e.g., `<template>`, `<style>`), use `prettier-ignore` comment. See also Prettier's [ignore documentation](https://prettier.io/docs/ignore#html).
-
-Currently, TOML files do not support ignore comments.
-
-## Prettier compatibility
-
-* `prettier-ignore` comment is also supported
 
 ---
 
@@ -32613,6 +33397,7 @@ const result = await minify("lib.js", code, {
 ---
 url: /docs/guide/usage/linter/migrate-from-eslint.md
 ---
+
 # Migrate from ESLint
 
 This guide is for existing JavaScript and TypeScript projects that currently use ESLint and want to migrate to Oxlint.
@@ -32770,6 +33555,7 @@ For plugins that are not implemented natively in Oxlint, it is recommended to us
 ---
 url: /docs/guide/usage/formatter/migrate-from-prettier.md
 ---
+
 # Migrate from Prettier
 
 This guide covers migrating from Prettier to Oxfmt.
@@ -36959,864 +37745,6 @@ description: >-
 ---
 
 ---
-url: /docs/guide/usage/linter/config-file-reference.md
----
-
-# Oxlint Configuration File
-
-This configuration is aligned with ESLint v8's configuration schema (`eslintrc.json`).
-
-Usage: `oxlint -c oxlintrc.json`
-
-Example
-
-`.oxlintrc.json`
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import", "typescript", "unicorn"],
-  "env": {
-    "browser": true
-  },
-  "globals": {
-    "foo": "readonly"
-  },
-  "settings": {
-    "react": {
-      "version": "18.2.0"
-    },
-    "custom": {
-      "option": true
-    }
-  },
-  "rules": {
-    "eqeqeq": "warn",
-    "import/no-cycle": "error",
-    "react/self-closing-comp": [
-      "error",
-      {
-        "html": false
-      }
-    ]
-  },
-  "overrides": [
-    {
-      "files": ["*.test.ts", "*.spec.ts"],
-      "rules": {
-        "@typescript-eslint/no-explicit-any": "off"
-      }
-    }
-  ]
-}
-```
-
-`oxlint.config.ts`
-
-```ts
-import { defineConfig } from "oxlint";
-
-export default defineConfig({
-  plugins: ["import", "typescript", "unicorn"],
-  env: {
-    browser: true,
-  },
-  globals: {
-    foo: "readonly",
-  },
-  settings: {
-    react: {
-      version: "18.2.0",
-    },
-    custom: { option: true },
-  },
-  rules: {
-    eqeqeq: "warn",
-    "import/no-cycle": "error",
-    "react/self-closing-comp": ["error", { html: false }],
-  },
-  overrides: [
-    {
-      files: ["*.test.ts", "*.spec.ts"],
-      rules: {
-        "@typescript-eslint/no-explicit-any": "off",
-      },
-    },
-  ],
-});
-```
-
-## $schema
-
-type: `string`
-
-Schema URI for editor tooling.
-
-## categories
-
-type: `object`
-
-Configure an entire category of rules all at once.
-
-Rules enabled or disabled this way will be overwritten by individual rules in the `rules` field.
-
-Example
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "categories": {
-    "correctness": "warn"
-  },
-  "rules": {
-    "eslint/no-unused-vars": "error"
-  }
-}
-```
-
-### categories.correctness
-
-### categories.nursery
-
-### categories.pedantic
-
-### categories.perf
-
-### categories.restriction
-
-### categories.style
-
-### categories.suspicious
-
-## env
-
-type: `Record<string, boolean>`
-
-Predefine global variables.
-
-Environments specify what global variables are predefined.
-Available environments:
-
-* amd - require() and define() globals.
-* applescript - AppleScript globals.
-* astro - Astro globals.
-* atomtest - Atom test globals.
-* audioworklet - AudioWorklet globals.
-* browser - browser globals.
-* builtin - Latest ECMAScript globals, equivalent to es2026.
-* commonjs - CommonJS globals and scoping.
-* embertest - Ember test globals.
-* es2015 - ECMAScript 2015 globals.
-* es2016 - ECMAScript 2016 globals.
-* es2017 - ECMAScript 2017 globals.
-* es2018 - ECMAScript 2018 globals.
-* es2019 - ECMAScript 2019 globals.
-* es2020 - ECMAScript 2020 globals.
-* es2021 - ECMAScript 2021 globals.
-* es2022 - ECMAScript 2022 globals.
-* es2023 - ECMAScript 2023 globals.
-* es2024 - ECMAScript 2024 globals.
-* es2025 - ECMAScript 2025 globals.
-* es2026 - ECMAScript 2026 globals.
-* es6 - ECMAScript 6 globals except modules.
-* greasemonkey - GreaseMonkey globals.
-* jasmine - Jasmine globals.
-* jest - Jest globals.
-* jquery - jQuery globals.
-* meteor - Meteor globals.
-* mocha - Mocha globals.
-* mongo - MongoDB globals.
-* nashorn - Java 8 Nashorn globals.
-* node - Node.js globals and scoping.
-* phantomjs - PhantomJS globals.
-* prototypejs - Prototype.js globals.
-* protractor - Protractor globals.
-* qunit - QUnit globals.
-* serviceworker - Service Worker globals.
-* shared-node-browser - Node.js and Browser common globals.
-* shelljs - ShellJS globals.
-* svelte - Svelte globals.
-* vitest - Vitest globals.
-* vue - Vue globals.
-* webextensions - WebExtensions globals.
-* worker - Web Workers globals.
-
-## extends
-
-type: `string[]`
-
-Paths of configuration files that this configuration file extends (inherits from). The files
-are resolved relative to the location of the configuration file that contains the `extends`
-property. The configuration files are merged from the first to the last, with the last file
-overriding the previous ones.
-
-## globals
-
-type: `Record<string, string>`
-
-Add or remove global variables.
-
-For each global variable, set the corresponding value equal to `"writable"`
-to allow the variable to be overwritten or `"readonly"` to disallow overwriting.
-
-Globals can be disabled by setting their value to `"off"`. For example, in
-an environment where most Es2015 globals are available but `Promise` is unavailable,
-you might use this config:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "env": {
-    "es6": true
-  },
-  "globals": {
-    "Promise": "off"
-  }
-}
-```
-
-You may also use `"readable"` or `false` to represent `"readonly"`, and
-`"writeable"` or `true` to represent `"writable"`.
-
-## ignorePatterns
-
-type: `string[]`
-
-default: `[]`
-
-Globs to ignore during linting. These are resolved from the configuration file path.
-
-## jsPlugins
-
-type: `array`
-
-JS plugins, allows usage of ESLint plugins with Oxlint.
-
-Read more about JS plugins in
-[the docs](https://oxc.rs/docs/guide/usage/linter/js-plugins.html).
-
-Note: JS plugins are in alpha and not subject to semver.
-
-Examples:
-
-Basic usage with a local plugin path.
-
-```json
-{
-  "jsPlugins": ["./custom-plugin.js"],
-  "rules": {
-    "custom/rule-name": "warn"
-  }
-}
-```
-
-Basic usage with a TypeScript plugin and a local plugin path.
-
-TypeScript plugin files are supported in the following environments:
-
-* Deno and Bun: TypeScript files are supported natively.
-* Node.js >=22.18.0 and Node.js ^20.19.0: TypeScript files are supported natively with built-in
-  type-stripping enabled by default.
-
-For older Node.js versions, TypeScript plugins are not supported. Please use JavaScript plugins or upgrade your Node version.
-
-```json
-{
-  "jsPlugins": ["./custom-plugin.ts"],
-  "rules": {
-    "custom/rule-name": "warn"
-  }
-}
-```
-
-Using a built-in Rust plugin alongside a JS plugin with the same name
-by giving the JS plugin an alias.
-
-```json
-{
-  "plugins": ["import"],
-  "jsPlugins": [
-    {
-      "name": "import-js",
-      "specifier": "eslint-plugin-import"
-    }
-  ],
-  "rules": {
-    "import/no-cycle": "error",
-    "import-js/no-unresolved": "warn"
-  }
-}
-```
-
-### jsPlugins\[n]
-
-type: `object | string`
-
-#### jsPlugins\[n].name
-
-type: `string`
-
-Custom name/alias for the plugin.
-
-Note: The following plugin names are reserved because they are implemented natively in Rust within oxlint and cannot be used for JS plugins:
-
-* react (includes react-hooks)
-* unicorn
-* typescript (includes @typescript-eslint)
-* oxc
-* import (includes import-x)
-* jsdoc
-* jest
-* vitest
-* jsx-a11y
-* nextjs
-* react-perf
-* promise
-* node
-* vue
-* eslint
-
-If you need to use the JavaScript version of any of these plugins, provide a custom alias to avoid conflicts.
-
-#### jsPlugins\[n].specifier
-
-type: `string`
-
-Path or package name of the plugin
-
-## options
-
-type: `object`
-
-Options for the linter.
-
-### options.denyWarnings
-
-type: `boolean`
-
-Ensure warnings produce a non-zero exit code.
-
-Equivalent to passing `--deny-warnings` on the CLI.
-
-### options.maxWarnings
-
-type: `integer`
-
-Specify a warning threshold. Exits with an error status if warnings exceed this value.
-
-Equivalent to passing `--max-warnings` on the CLI.
-
-### options.reportUnusedDisableDirectives
-
-type: `"allow" | "off" | "warn" | "error" | "deny" | integer`
-
-Report unused disable directives (e.g. `// oxlint-disable-line` or `// eslint-disable-line`).
-
-Equivalent to passing `--report-unused-disable-directives-severity` on the CLI.
-CLI flags take precedence over this value when both are set.
-Only supported in the root configuration file.
-
-### options.respectEslintDisableDirectives
-
-type: `boolean`
-
-Whether oxlint should respect `eslint-disable*` and `eslint-enable*`
-directives in addition to its native `oxlint-*` directives.
-
-Defaults to `true`.
-Only supported in the root configuration file.
-
-### options.typeAware
-
-type: `boolean`
-
-Enable rules that require type information.
-
-Equivalent to passing `--type-aware` on the CLI.
-
-Note that this requires the `oxlint-tsgolint` package to be installed.
-
-### options.typeCheck
-
-type: `boolean`
-
-Enable experimental type checking (includes TypeScript compiler diagnostics).
-
-Equivalent to passing `--type-check` on the CLI.
-
-Note that this requires the `oxlint-tsgolint` package to be installed.
-
-## overrides
-
-type: `array`
-
-### overrides\[n]
-
-type: `object`
-
-#### overrides\[n].env
-
-type: `object`
-
-Environments enable and disable collections of global variables.
-
-#### overrides\[n].files
-
-type: `string[]`
-
-A set of glob patterns.
-
-#### overrides\[n].globals
-
-type: `object`
-
-Enabled or disabled specific global variables.
-
-#### overrides\[n].jsPlugins
-
-type: `array`
-
-JS plugins for this override, allows usage of ESLint plugins with Oxlint.
-
-Read more about JS plugins in
-[the docs](https://oxc.rs/docs/guide/usage/linter/js-plugins.html).
-
-Note: JS plugins are in alpha and not subject to semver.
-
-##### overrides\[n].jsPlugins\[n]
-
-type: `object | string`
-
-###### overrides\[n].jsPlugins\[n].name
-
-type: `string`
-
-Custom name/alias for the plugin.
-
-Note: The following plugin names are reserved because they are implemented natively in Rust within oxlint and cannot be used for JS plugins:
-
-* react (includes react-hooks)
-* unicorn
-* typescript (includes @typescript-eslint)
-* oxc
-* import (includes import-x)
-* jsdoc
-* jest
-* vitest
-* jsx-a11y
-* nextjs
-* react-perf
-* promise
-* node
-* vue
-* eslint
-
-If you need to use the JavaScript version of any of these plugins, provide a custom alias to avoid conflicts.
-
-###### overrides\[n].jsPlugins\[n].specifier
-
-type: `string`
-
-Path or package name of the plugin
-
-#### overrides\[n].plugins
-
-type: `array`
-
-default: `null`
-
-Optionally change what plugins are enabled for this override. When
-omitted, the base config's plugins are used.
-
-##### overrides\[n].plugins\[n]
-
-type: `"eslint" | "react" | "unicorn" | "typescript" | "oxc" | "import" | "jsdoc" | "jest" | "vitest" | "jsx-a11y" | "nextjs" | "react-perf" | "promise" | "node" | "vue"`
-
-#### overrides\[n].rules
-
-type: `object`
-
-See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html)
-
-## plugins
-
-type: `array`
-
-default: `null`
-
-Enabled built-in plugins for Oxlint.
-You can view the list of available plugins on
-[the website](https://oxc.rs/docs/guide/usage/linter/plugins.html#supported-plugins).
-
-NOTE: Setting the `plugins` field will overwrite the base set of plugins.
-The `plugins` array should reflect all of the plugins you want to use.
-
-### plugins\[n]
-
-type: `"eslint" | "react" | "unicorn" | "typescript" | "oxc" | "import" | "jsdoc" | "jest" | "vitest" | "jsx-a11y" | "nextjs" | "react-perf" | "promise" | "node" | "vue"`
-
-## rules
-
-type: `object`
-
-See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html)
-
-## settings
-
-type: `object`
-
-Configure the behavior of linter plugins.
-
-Here's an example if you're using Next.js in a monorepo:
-
-```json
-{
-  "settings": {
-    "next": {
-      "rootDir": "apps/dashboard/"
-    },
-    "react": {
-      "linkComponents": [
-        {
-          "name": "Link",
-          "linkAttribute": "to"
-        }
-      ]
-    },
-    "jsx-a11y": {
-      "components": {
-        "Link": "a",
-        "Button": "button"
-      }
-    }
-  }
-}
-```
-
-### settings.jest
-
-type: `object`
-
-Configure Jest plugin rules.
-
-See [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest)'s
-configuration for a full reference.
-
-#### settings.jest.version
-
-type: `integer | string`
-
-default: `null`
-
-Jest version — accepts a number (`29`) or a semver string (`"29.1.0"` or `"v29.1.0"`),
-storing only the major version.
-::: warning
-Using this config will override the `no-deprecated-functions` config set.
-:::
-
-### settings.jsdoc
-
-type: `object`
-
-#### settings.jsdoc.augmentsExtendsReplacesDocs
-
-type: `boolean`
-
-default: `false`
-
-Only for `require-(yields|returns|description|example|param|throws)` rule
-
-#### settings.jsdoc.exemptDestructuredRootsFromChecks
-
-type: `boolean`
-
-default: `false`
-
-Only for `require-param-type` and `require-param-description` rule
-
-#### settings.jsdoc.ignoreInternal
-
-type: `boolean`
-
-default: `false`
-
-For all rules but NOT apply to `empty-tags` rule
-
-#### settings.jsdoc.ignorePrivate
-
-type: `boolean`
-
-default: `false`
-
-For all rules but NOT apply to `check-access` and `empty-tags` rule
-
-#### settings.jsdoc.ignoreReplacesDocs
-
-type: `boolean`
-
-default: `true`
-
-Only for `require-(yields|returns|description|example|param|throws)` rule
-
-#### settings.jsdoc.implementsReplacesDocs
-
-type: `boolean`
-
-default: `false`
-
-Only for `require-(yields|returns|description|example|param|throws)` rule
-
-#### settings.jsdoc.overrideReplacesDocs
-
-type: `boolean`
-
-default: `true`
-
-Only for `require-(yields|returns|description|example|param|throws)` rule
-
-#### settings.jsdoc.tagNamePreference
-
-type: `object`
-
-default: `{}`
-
-### settings.jsx-a11y
-
-type: `object`
-
-Configure JSX A11y plugin rules.
-
-See
-[eslint-plugin-jsx-a11y](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y#configurations)'s
-configuration for a full reference.
-
-#### settings.jsx-a11y.attributes
-
-type: `Record<string, array>`
-
-default: `{}`
-
-Map of attribute names to their DOM equivalents.
-This is useful for non-React frameworks that use different attribute names.
-
-Example:
-
-```json
-{
-  "settings": {
-    "jsx-a11y": {
-      "attributes": {
-        "for": ["htmlFor", "for"]
-      }
-    }
-  }
-}
-```
-
-#### settings.jsx-a11y.components
-
-type: `Record<string, string>`
-
-default: `{}`
-
-To have your custom components be checked as DOM elements, you can
-provide a mapping of your component names to the DOM element name.
-
-Example:
-
-```json
-{
-  "settings": {
-    "jsx-a11y": {
-      "components": {
-        "Link": "a",
-        "IconButton": "button"
-      }
-    }
-  }
-}
-```
-
-#### settings.jsx-a11y.polymorphicPropName
-
-type: `string`
-
-An optional setting that define the prop your code uses to create polymorphic components.
-This setting will be used to determine the element type in rules that
-require semantic context.
-
-For example, if you set the `polymorphicPropName` to `as`, then this element:
-
-```jsx
-<Box as="h3">Hello</Box>
-```
-
-Will be treated as an `h3`. If not set, this component will be treated
-as a `Box`.
-
-### settings.next
-
-type: `object`
-
-Configure Next.js plugin rules.
-
-#### settings.next.rootDir
-
-type: `array | string`
-
-##### settings.next.rootDir\[n]
-
-type: `string`
-
-### settings.react
-
-type: `object`
-
-Configure React plugin rules.
-
-Derived from [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react#configuration-legacy-eslintrc-)
-
-#### settings.react.componentWrapperFunctions
-
-type: `string[]`
-
-default: `[]`
-
-Functions that wrap React components and should be treated as HOCs.
-
-Example:
-
-```jsonc
-{
-  "settings": {
-    "react": {
-      "componentWrapperFunctions": ["observer", "withRouter"],
-    },
-  },
-}
-```
-
-#### settings.react.formComponents
-
-type: `array`
-
-default: `[]`
-
-Components used as alternatives to `<form>` for forms, such as `<Formik>`.
-
-Example:
-
-```jsonc
-{
-  "settings": {
-    "react": {
-      "formComponents": [
-        "CustomForm",
-        // OtherForm is considered a form component and has an endpoint attribute
-        { "name": "OtherForm", "formAttribute": "endpoint" },
-        // allows specifying multiple properties if necessary
-        { "name": "Form", "formAttribute": ["registerEndpoint", "loginEndpoint"] },
-      ],
-    },
-  },
-}
-```
-
-##### settings.react.formComponents\[n]
-
-type: `object | string`
-
-###### settings.react.formComponents\[n].attribute
-
-type: `string`
-
-###### settings.react.formComponents\[n].name
-
-type: `string`
-
-#### settings.react.linkComponents
-
-type: `array`
-
-default: `[]`
-
-Components used as alternatives to `<a>` for linking, such as `<Link>`.
-
-Example:
-
-```jsonc
-{
-  "settings": {
-    "react": {
-      "linkComponents": [
-        "HyperLink",
-        // Use `linkAttribute` for components that use a different prop name
-        // than `href`.
-        { "name": "MyLink", "linkAttribute": "to" },
-        // allows specifying multiple properties if necessary
-        { "name": "Link", "linkAttribute": ["to", "href"] },
-      ],
-    },
-  },
-}
-```
-
-##### settings.react.linkComponents\[n]
-
-type: `object | string`
-
-###### settings.react.linkComponents\[n].attribute
-
-type: `string`
-
-###### settings.react.linkComponents\[n].name
-
-type: `string`
-
-#### settings.react.version
-
-type: `string`
-
-default: `null`
-
-React version to use for version-specific rules.
-
-Accepts semver versions (e.g., "18.2.0", "17.0").
-
-Example:
-
-```jsonc
-{
-  "settings": {
-    "react": {
-      "version": "18.2.0",
-    },
-  },
-}
-```
-
-### settings.vitest
-
-type: `object`
-
-Configure Vitest plugin rules.
-
-See [eslint-plugin-vitest](https://github.com/vitest-dev/eslint-plugin-vitest)'s
-configuration for a full reference.
-
-#### settings.vitest.typecheck
-
-type: `boolean`
-
-default: `false`
-
-Whether to enable typecheck mode for Vitest rules.
-When enabled, some rules will skip certain checks for describe blocks
-to accommodate TypeScript type checking scenarios.
-
----
-
----
 url: /docs/guide/usage/linter/generated-config.md
 ---
 
@@ -41482,6 +41410,179 @@ This rule was added in v0.7.1.
 ---
 
 ---
+url: /docs/guide/usage/formatter/quickstart.md
+description: Install Oxfmt and learn the common workflows.
+---
+
+# Quickstart
+
+Recommended setup and common workflows.
+
+## Install
+
+Install `oxfmt` as a dev dependency:
+
+::: code-group
+
+```sh [npm]
+$ npm add -D oxfmt
+```
+
+```sh [pnpm]
+$ pnpm add -D oxfmt
+```
+
+```sh [yarn]
+$ yarn add -D oxfmt
+```
+
+```sh [bun]
+$ bun add -D oxfmt
+```
+
+:::
+
+Add scripts to `package.json`:
+
+```json [package.json]
+{
+  "scripts": {
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
+  }
+}
+```
+
+Format files:
+
+::: code-group
+
+```sh [npm]
+npm run fmt
+```
+
+```sh [pnpm]
+pnpm run fmt
+```
+
+```sh [yarn]
+yarn run fmt
+```
+
+```sh [bun]
+bun run fmt
+```
+
+:::
+
+Check formatting without writing files:
+
+::: code-group
+
+```sh [npm]
+npm run fmt:check
+```
+
+```sh [pnpm]
+pnpm run fmt:check
+```
+
+```sh [yarn]
+yarn run fmt:check
+```
+
+```sh [bun]
+bun run fmt:check
+```
+
+:::
+
+## Usage
+
+```sh
+oxfmt [OPTIONS] [PATH]...
+```
+
+Running `oxfmt` without arguments formats the current directory (equivalent to `prettier --write .`).
+
+CLI options like `--no-semi` are not supported. Use the configuration file instead to ensure consistent settings across CLI and editor integrations.
+
+To use glob patterns in positional paths, be sure to quote them. Otherwise, they may or may not be expanded depending on your environment.
+
+For the complete list of options, see the [CLI reference](/docs/guide/usage/formatter/cli.html).
+
+## Common workflows
+
+### Pre-commit with lint-staged
+
+```json [package.json]
+{
+  "lint-staged": {
+    "*": "oxfmt --no-error-on-unmatched-pattern"
+  }
+}
+```
+
+`--no-error-on-unmatched-pattern` prevents errors when no files match the pattern.
+
+### Create a config file
+
+Initialize `.oxfmtrc.json` with defaults:
+
+```sh
+oxfmt --init
+```
+
+### Migrate from Prettier
+
+```sh
+oxfmt --migrate prettier
+```
+
+See [migrate from prettier](./migrate-from-prettier) for details.
+
+### List files that differ
+
+```sh
+oxfmt --list-different
+```
+
+This is useful for configuring [files to ignore](./ignore-files).
+
+### Piping file contents
+
+```sh
+echo 'const   x   =   1' | oxfmt --stdin-filepath test.ts
+```
+
+Prints `const x = 1;`
+
+### Node.js API
+
+```ts
+import { format, type FormatOptions } from "oxfmt";
+
+const input = `let a=42;`;
+const options: FormatOptions = {
+  semi: false,
+};
+
+const { code } = await format("a.js", input, options);
+console.log(code); // "let a = 42"
+```
+
+## Next steps
+
+* [Change configuration](./config)
+* [Setup editors](./editors)
+* [Setup CI](./ci)
+* Learn advanced features: [sorting](./sorting), [embedded formatting](./embedded-formatting)
+* [Compatibility matrix](/compatibility)
+* Check [CLI reference](./cli)
+
+---
+
+---
 url: /docs/guide/usage/linter/quickstart.md
 description: Install Oxlint and learn the common workflows.
 ---
@@ -41744,179 +41845,6 @@ The full list is in the [Rules reference](/docs/guide/usage/linter/rules).
 * Migrate: [From ESLint](/docs/guide/usage/linter/migrate-from-eslint)&#x20;
 * [Compatibility matrix](/compatibility)
 * [CLI reference](/docs/guide/usage/linter/cli)
-
----
-
----
-url: /docs/guide/usage/formatter/quickstart.md
-description: Install Oxfmt and learn the common workflows.
----
-
-# Quickstart
-
-Recommended setup and common workflows.
-
-## Install
-
-Install `oxfmt` as a dev dependency:
-
-::: code-group
-
-```sh [npm]
-$ npm add -D oxfmt
-```
-
-```sh [pnpm]
-$ pnpm add -D oxfmt
-```
-
-```sh [yarn]
-$ yarn add -D oxfmt
-```
-
-```sh [bun]
-$ bun add -D oxfmt
-```
-
-:::
-
-Add scripts to `package.json`:
-
-```json [package.json]
-{
-  "scripts": {
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
-  }
-}
-```
-
-Format files:
-
-::: code-group
-
-```sh [npm]
-npm run fmt
-```
-
-```sh [pnpm]
-pnpm run fmt
-```
-
-```sh [yarn]
-yarn run fmt
-```
-
-```sh [bun]
-bun run fmt
-```
-
-:::
-
-Check formatting without writing files:
-
-::: code-group
-
-```sh [npm]
-npm run fmt:check
-```
-
-```sh [pnpm]
-pnpm run fmt:check
-```
-
-```sh [yarn]
-yarn run fmt:check
-```
-
-```sh [bun]
-bun run fmt:check
-```
-
-:::
-
-## Usage
-
-```sh
-oxfmt [OPTIONS] [PATH]...
-```
-
-Running `oxfmt` without arguments formats the current directory (equivalent to `prettier --write .`).
-
-CLI options like `--no-semi` are not supported. Use the configuration file instead to ensure consistent settings across CLI and editor integrations.
-
-To use glob patterns in positional paths, be sure to quote them. Otherwise, they may or may not be expanded depending on your environment.
-
-For the complete list of options, see the [CLI reference](/docs/guide/usage/formatter/cli.html).
-
-## Common workflows
-
-### Pre-commit with lint-staged
-
-```json [package.json]
-{
-  "lint-staged": {
-    "*": "oxfmt --no-error-on-unmatched-pattern"
-  }
-}
-```
-
-`--no-error-on-unmatched-pattern` prevents errors when no files match the pattern.
-
-### Create a config file
-
-Initialize `.oxfmtrc.json` with defaults:
-
-```sh
-oxfmt --init
-```
-
-### Migrate from Prettier
-
-```sh
-oxfmt --migrate prettier
-```
-
-See [migrate from prettier](./migrate-from-prettier) for details.
-
-### List files that differ
-
-```sh
-oxfmt --list-different
-```
-
-This is useful for configuring [files to ignore](./ignore-files).
-
-### Piping file contents
-
-```sh
-echo 'const   x   =   1' | oxfmt --stdin-filepath test.ts
-```
-
-Prints `const x = 1;`
-
-### Node.js API
-
-```ts
-import { format, type FormatOptions } from "oxfmt";
-
-const input = `let a=42;`;
-const options: FormatOptions = {
-  semi: false,
-};
-
-const { code } = await format("a.js", input, options);
-console.log(code); // "let a = 42"
-```
-
-## Next steps
-
-* [Change configuration](./config)
-* [Setup editors](./editors)
-* [Setup CI](./ci)
-* Learn advanced features: [sorting](./sorting), [embedded formatting](./embedded-formatting)
-* [Compatibility matrix](/compatibility)
-* Check [CLI reference](./cli)
 
 ---
 
@@ -46618,152 +46546,6 @@ Upon visit, we can call `enter_scope` and `leave_scope` accordingly to build the
 ---
 
 ---
-url: /docs/guide/usage/linter/ci.md
-description: Run Oxlint in CI or as a git hook.
----
-
-# Setup CI and other integrations
-
-You can - and should - setup your CI pipeline to run Oxlint and fail the build on lint errors.
-
-This page also covers other integrations you may want to include, like git pre-commit hooks.
-
-## CI
-
-These instructions assume you have already set up Oxlint in your project by adding `oxlint` to your devDependencies in your `package.json`, and already have an oxlint configuration file in the repo.
-
-### GitHub Actions
-
-First, add a `lint` script to your `package.json` if you don't have one already:
-
-```json [package.json]
-{
-  "scripts": {
-    "lint": "oxlint"
-  }
-}
-```
-
-Then create `.github/workflows/oxlint.yml`:
-
-```yaml [.github/workflows/oxlint.yml]
-name: Lint
-
-on:
-  pull_request:
-  push:
-    branches: [main]
-
-permissions: {}
-
-jobs:
-  oxlint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
-          cache: pnpm
-
-      # alternatively use npm install / yarn install here
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run lint
-```
-
-You can, alternatively, output using the github format option, for [better warning/error annotations](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message):
-
-```json [package.json]
-{
-  "scripts": {
-    "lint:github": "oxlint --format=github"
-  }
-}
-```
-
-### GitLab CI
-
-If you use GitLab CI, you can set up Oxlint with `--format=gitlab` and [GitLab's Code Quality feature](https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format) to get inline annotations for lint violations in merge requests.
-
-To set this up, you can add a script to your `package.json` to output the gitlab format and save it to a file, like so:
-
-```json [package.json]
-{
-  "scripts": {
-    "lint:gitlab": "oxlint --format=gitlab > gitlab-oxlint-report.json"
-  }
-}
-```
-
-And then add a job to your `.gitlab-ci.yml`, to run the script and upload the report as a Code Quality artifact:
-
-```yml [.gitlab-ci.yml]
-oxlint:
-  image: node:lts
-  stage: test
-  before_script:
-    # alternatively use pnpm install / yarn install here
-    - npm install
-  script:
-    - npm run lint:gitlab
-  artifacts:
-    reports:
-      codequality:
-        # This is relative to your repository root, so adjust if your repo has a different structure or you put the report in a different location
-        - gitlab-oxlint-report.json
-```
-
-If you do not want to use the Code Quality feature, you can simply run oxlint without `--format=gitlab` in the CI job instead.
-
-You should ensure type-aware rules are enabled if you want to use them, and consider caching `node_modules` to speed up the installation of dependencies.
-
-## Git hooks
-
-### lint-staged
-
-For JS/TS projects using [lint-staged](https://npmx.dev/package/lint-staged), you can set up oxlint to run as a pre-commit hook as follows:
-
-```json [package.json]
-{
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs}": "pnpm run lint"
-  }
-}
-```
-
-To automatically install the git hook when installing dependencies, considering also using [husky](https://typicode.github.io/husky/get-started.html).
-
-### pre-commit
-
-If you use [pre-commit](https://pre-commit.com/) to manage git hooks, you can set up Oxlint as follows:
-
-```yaml [.pre-commit-config.yaml]
-repos:
-  - repo: https://github.com/oxc-project/mirrors-oxlint
-    rev: v0.0.0
-    hooks:
-      - id: oxlint
-        verbose: true
-```
-
-Replace `v0.0.0` with the latest version.
-
-## Other integrations
-
-### Unplugin
-
-Unplugin is supported via a [third-party package](https://npmx.dev/package/unplugin-oxlint)
-
-### Vite plugin
-
-A Vite plugin is supported via a [third-party package](https://npmx.dev/package/vite-plugin-oxlint)
-
----
-
----
 url: /docs/guide/usage/formatter/ci.md
 description: Run Oxfmt in CI or as a git hook.
 ---
@@ -46911,152 +46693,148 @@ To automatically install the git hook when installing dependencies, considering 
 ---
 
 ---
-url: /docs/guide/usage/linter/editors.md
-description: 'Configure Oxlint in VS Code, Zed, JetBrains, and other editors.'
+url: /docs/guide/usage/linter/ci.md
+description: Run Oxlint in CI or as a git hook.
 ---
 
-# Setup editors
+# Setup CI and other integrations
 
-Editor extensions use `oxlint --lsp` from your project, so `oxlint` must be installed locally.
+You can - and should - setup your CI pipeline to run Oxlint and fail the build on lint errors.
 
-See [Quickstart](./quickstart) to install Oxlint.
+This page also covers other integrations you may want to include, like git pre-commit hooks.
 
-## Supported editors
+## CI
 
-* [VS Code](#vs-code) (and Cursor, etc.)
-* [Zed](#zed)
-* [JetBrains](#jetbrains)
-* [Neovim](#neovim)
-* [Other editors](#other-editors)
+These instructions assume you have already set up Oxlint in your project by adding `oxlint` to your devDependencies in your `package.json`, and already have an oxlint configuration file in the repo.
 
-## VS Code
+### GitHub Actions
 
-### Install
+First, add a `lint` script to your `package.json` if you don't have one already:
 
-Download the official Oxc VS Code extension from:
-
-* [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
-* [Open VSX Registry](https://open-vsx.org/extension/oxc/oxc-vscode)
-
-**The extension is compatible with other VS Code-based editors**, including Cursor.
-
-### Team setup
-
-1. Recommend the extension for contributors:
-
-`.vscode/extensions.json`:
-
-```json [.vscode/extensions.json]
+```json [package.json]
 {
-  "recommendations": ["oxc.oxc-vscode"]
-}
-```
-
-2. Enable fix-on-save in `.vscode/settings.json`:
-
-```json [.vscode/settings.json]
-{
-  "editor.codeActionsOnSave": {
-    "source.fixAll.oxc": "always"
+  "scripts": {
+    "lint": "oxlint"
   }
 }
 ```
 
-3. Enable type-aware linting (optional):
+Then create `.github/workflows/oxlint.yml`:
 
-To enable it for the whole project, set it in the root Oxlint config:
+```yaml [.github/workflows/oxlint.yml]
+name: Lint
 
-::: code-group
+on:
+  pull_request:
+  push:
+    branches: [main]
 
-```json [.oxlintrc.json]
+permissions: {}
+
+jobs:
+  oxlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      # alternatively use npm install / yarn install here
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+```
+
+You can, alternatively, output using the github format option, for [better warning/error annotations](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message):
+
+```json [package.json]
 {
-  "options": {
-    "typeAware": true
+  "scripts": {
+    "lint:github": "oxlint --format=github"
   }
 }
 ```
 
-```ts [oxlint.config.ts]
-import { defineConfig } from "oxlint";
+### GitLab CI
 
-export default defineConfig({
-  options: {
-    typeAware: true,
-  },
-});
-```
+If you use GitLab CI, you can set up Oxlint with `--format=gitlab` and [GitLab's Code Quality feature](https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format) to get inline annotations for lint violations in merge requests.
 
-:::
+To set this up, you can add a script to your `package.json` to output the gitlab format and save it to a file, like so:
 
-Or set it in `.vscode/settings.json`:
-
-```json [.vscode/settings.json]
+```json [package.json]
 {
-  "oxc.typeAware": true
+  "scripts": {
+    "lint:gitlab": "oxlint --format=gitlab > gitlab-oxlint-report.json"
+  }
 }
 ```
 
-When `oxc.typeAware` is unset, the editor uses the root config's `options.typeAware` value. When set explicitly, it overrides the config value.
+And then add a job to your `.gitlab-ci.yml`, to run the script and upload the report as a Code Quality artifact:
 
-You also need to ensure `oxlint-tsgolint` is installed in your project. See [the type-aware linting docs](/docs/guide/usage/linter/type-aware) for more details.
-
-### Reference
-
-* [oxc-project/oxc-vscode](https://github.com/oxc-project/oxc-vscode)
-
-## Zed
-
-### Install
-
-* [Oxc Zed Extension](https://zed.dev/extensions/oxc)
-
-### Reference
-
-* [oxc-project/oxc-zed](https://github.com/oxc-project/oxc-zed)
-
-## JetBrains
-
-IntelliJ IDEA and WebStorm.
-
-### Install
-
-* [Oxc in JetBrains Marketplace](https://plugins.jetbrains.com/plugin/27061-oxc)
-
-### Reference
-
-* [oxc-project/oxc-intellij-plugin](https://github.com/oxc-project/oxc-intellij-plugin)
-
-## Neovim
-
-### nvim-lspconfig
-
-```sh
-npm i -g oxlint
+```yml [.gitlab-ci.yml]
+oxlint:
+  image: node:lts
+  stage: test
+  before_script:
+    # alternatively use pnpm install / yarn install here
+    - npm install
+  script:
+    - npm run lint:gitlab
+  artifacts:
+    reports:
+      codequality:
+        # This is relative to your repository root, so adjust if your repo has a different structure or you put the report in a different location
+        - gitlab-oxlint-report.json
 ```
 
-```lua
-vim.lsp.enable('oxlint')
+If you do not want to use the Code Quality feature, you can simply run oxlint without `--format=gitlab` in the CI job instead.
+
+You should ensure type-aware rules are enabled if you want to use them, and consider caching `node_modules` to speed up the installation of dependencies.
+
+## Git hooks
+
+### lint-staged
+
+For JS/TS projects using [lint-staged](https://npmx.dev/package/lint-staged), you can set up oxlint to run as a pre-commit hook as follows:
+
+```json [package.json]
+{
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs}": "pnpm run lint"
+  }
+}
 ```
 
-* [nvim-lspconfig: oxlint](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#oxlint)
+To automatically install the git hook when installing dependencies, considering also using [husky](https://typicode.github.io/husky/get-started.html).
 
-### coc.nvim
+### pre-commit
 
-```vim
-:CocInstall coc-oxc
+If you use [pre-commit](https://pre-commit.com/) to manage git hooks, you can set up Oxlint as follows:
+
+```yaml [.pre-commit-config.yaml]
+repos:
+  - repo: https://github.com/oxc-project/mirrors-oxlint
+    rev: v0.0.0
+    hooks:
+      - id: oxlint
+        verbose: true
 ```
 
-* [oxc-project/coc-oxc](https://github.com/oxc-project/coc-oxc)
+Replace `v0.0.0` with the latest version.
 
-## Other editors
+## Other integrations
 
-For editors with LSP support (Emacs, Helix, Sublime), you can use `oxlint --lsp` as your language server.
-To configure it, refer to the [LSP configuration reference](./lsp-config-reference.md) for the supported options.
+### Unplugin
 
-## Reference
+Unplugin is supported via a [third-party package](https://npmx.dev/package/unplugin-oxlint)
 
-* [oxc\_language\_server](https://github.com/oxc-project/oxc/tree/main/crates/oxc_language_server)
-* [LSP configuration reference](/docs/guide/usage/linter/lsp-config-reference.md)
+### Vite plugin
+
+A Vite plugin is supported via a [third-party package](https://npmx.dev/package/vite-plugin-oxlint)
 
 ---
 
@@ -47213,8 +46991,159 @@ cat foo/bar.js | oxfmt --stdin-filepath dummy.js --config ./path/to/config.json
 ---
 
 ---
+url: /docs/guide/usage/linter/editors.md
+description: 'Configure Oxlint in VS Code, Zed, JetBrains, and other editors.'
+---
+
+# Setup editors
+
+Editor extensions use `oxlint --lsp` from your project, so `oxlint` must be installed locally.
+
+See [Quickstart](./quickstart) to install Oxlint.
+
+## Supported editors
+
+* [VS Code](#vs-code) (and Cursor, etc.)
+* [Zed](#zed)
+* [JetBrains](#jetbrains)
+* [Neovim](#neovim)
+* [Other editors](#other-editors)
+
+## VS Code
+
+### Install
+
+Download the official Oxc VS Code extension from:
+
+* [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
+* [Open VSX Registry](https://open-vsx.org/extension/oxc/oxc-vscode)
+
+**The extension is compatible with other VS Code-based editors**, including Cursor.
+
+### Team setup
+
+1. Recommend the extension for contributors:
+
+`.vscode/extensions.json`:
+
+```json [.vscode/extensions.json]
+{
+  "recommendations": ["oxc.oxc-vscode"]
+}
+```
+
+2. Enable fix-on-save in `.vscode/settings.json`:
+
+```json [.vscode/settings.json]
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "always"
+  }
+}
+```
+
+3. Enable type-aware linting (optional):
+
+To enable it for the whole project, set it in the root Oxlint config:
+
+::: code-group
+
+```json [.oxlintrc.json]
+{
+  "options": {
+    "typeAware": true
+  }
+}
+```
+
+```ts [oxlint.config.ts]
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
+  options: {
+    typeAware: true,
+  },
+});
+```
+
+:::
+
+Or set it in `.vscode/settings.json`:
+
+```json [.vscode/settings.json]
+{
+  "oxc.typeAware": true
+}
+```
+
+When `oxc.typeAware` is unset, the editor uses the root config's `options.typeAware` value. When set explicitly, it overrides the config value.
+
+You also need to ensure `oxlint-tsgolint` is installed in your project. See [the type-aware linting docs](/docs/guide/usage/linter/type-aware) for more details.
+
+### Reference
+
+* [oxc-project/oxc-vscode](https://github.com/oxc-project/oxc-vscode)
+
+## Zed
+
+### Install
+
+* [Oxc Zed Extension](https://zed.dev/extensions/oxc)
+
+### Reference
+
+* [oxc-project/oxc-zed](https://github.com/oxc-project/oxc-zed)
+
+## JetBrains
+
+IntelliJ IDEA and WebStorm.
+
+### Install
+
+* [Oxc in JetBrains Marketplace](https://plugins.jetbrains.com/plugin/27061-oxc)
+
+### Reference
+
+* [oxc-project/oxc-intellij-plugin](https://github.com/oxc-project/oxc-intellij-plugin)
+
+## Neovim
+
+### nvim-lspconfig
+
+```sh
+npm i -g oxlint
+```
+
+```lua
+vim.lsp.enable('oxlint')
+```
+
+* [nvim-lspconfig: oxlint](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#oxlint)
+
+### coc.nvim
+
+```vim
+:CocInstall coc-oxc
+```
+
+* [oxc-project/coc-oxc](https://github.com/oxc-project/coc-oxc)
+
+## Other editors
+
+For editors with LSP support (Emacs, Helix, Sublime), you can use `oxlint --lsp` as your language server.
+To configure it, refer to the [LSP configuration reference](./lsp-config-reference.md) for the supported options.
+
+## Reference
+
+* [oxc\_language\_server](https://github.com/oxc-project/oxc/tree/main/crates/oxc_language_server)
+* [LSP configuration reference](/docs/guide/usage/linter/lsp-config-reference.md)
+
+---
+
+---
 url: /docs/guide/usage/formatter/sorting.md
 ---
+
 # Sorting
 
 Oxfmt includes sorting features for imports, Tailwind classes, and package.json.
@@ -64356,6 +64285,7 @@ This rule was added in v0.0.14.
 ---
 url: /docs/guide/usage/formatter/unsupported-features.md
 ---
+
 # Unsupported features
 
 :::info
@@ -64392,6 +64322,69 @@ Not supported. However, Oxfmt provides built-in alternatives:
 See [Configuration file reference](./config-file-reference) for details.
 
 For what Oxfmt does support across frameworks and file types, see the [compatibility matrix](/compatibility).
+
+---
+
+---
+url: /docs/guide/usage/formatter/generated-cli.md
+---
+
+## Usage
+
+**`oxfmt`** \[**`-c`**=*`PATH`*] \[*`PATH`*]...
+
+## Mode Options:
+
+* **`    --init`** —
+  Initialize `.oxfmtrc.json` with default values
+* **`    --migrate`**=*`SOURCE`* —
+  Migrate configuration to `.oxfmtrc.json` from specified source Available sources: prettier, biome
+* **`    --lsp`** —
+  Start language server protocol (LSP) server
+* **`    --stdin-filepath`**=*`PATH`* —
+  Specify the file name to use to infer which parser to use
+
+## Output Options:
+
+* **`    --write`** —
+  Format and write files in place (default)
+* **`    --check`** —
+  Check if files are formatted, also show statistics
+* **`    --list-different`** —
+  List files that would be changed
+
+## Config Options
+
+* **`-c`**, **`--config`**=*`PATH`* —
+  Path to the configuration file (.json, .jsonc, .ts, .mts, .cts, .js, .mjs, .cjs)
+* **`    --disable-nested-config`** —
+  Do not search for configuration files in subdirectories
+
+## Ignore Options
+
+* **`    --ignore-path`**=*`PATH`* —
+  Path to ignore file(s). Can be specified multiple times. If not specified, .gitignore and .prettierignore in the current directory are used.
+* **`    --with-node-modules`** —
+  Format code in node\_modules directory (skipped by default)
+
+## Runtime Options
+
+* **`    --no-error-on-unmatched-pattern`** —
+  Do not exit with error when pattern is unmatched
+* **`    --threads`**=*`INT`* —
+  Number of threads to use. Set to 1 for using only 1 CPU core.
+
+## Available positional items:
+
+* *`PATH`* —
+  Single file, path or list of paths. Glob patterns are also supported. (Be sure to quote them, otherwise your shell may expand them before passing.) Exclude patterns with `!` prefix like `'!**/fixtures/*.js'` are also supported. If not provided, current working directory is used.
+
+## Available options:
+
+* **`-h`**, **`--help`** —
+  Prints help information
+* **`-V`**, **`--version`** —
+  Prints version information
 
 ---
 
@@ -64649,69 +64642,6 @@ It will override the root config's `typeAware` option if set.
 type: `"allow" | "warn" | "deny"`
 
 How to handle unused disable directives. By default, they are allowed and ignored.
-
----
-
----
-url: /docs/guide/usage/formatter/generated-cli.md
----
-
-## Usage
-
-**`oxfmt`** \[**`-c`**=*`PATH`*] \[*`PATH`*]...
-
-## Mode Options:
-
-* **`    --init`** —
-  Initialize `.oxfmtrc.json` with default values
-* **`    --migrate`**=*`SOURCE`* —
-  Migrate configuration to `.oxfmtrc.json` from specified source Available sources: prettier, biome
-* **`    --lsp`** —
-  Start language server protocol (LSP) server
-* **`    --stdin-filepath`**=*`PATH`* —
-  Specify the file name to use to infer which parser to use
-
-## Output Options:
-
-* **`    --write`** —
-  Format and write files in place (default)
-* **`    --check`** —
-  Check if files are formatted, also show statistics
-* **`    --list-different`** —
-  List files that would be changed
-
-## Config Options
-
-* **`-c`**, **`--config`**=*`PATH`* —
-  Path to the configuration file (.json, .jsonc, .ts, .mts, .cts, .js, .mjs, .cjs)
-* **`    --disable-nested-config`** —
-  Do not search for configuration files in subdirectories
-
-## Ignore Options
-
-* **`    --ignore-path`**=*`PATH`* —
-  Path to ignore file(s). Can be specified multiple times. If not specified, .gitignore and .prettierignore in the current directory are used.
-* **`    --with-node-modules`** —
-  Format code in node\_modules directory (skipped by default)
-
-## Runtime Options
-
-* **`    --no-error-on-unmatched-pattern`** —
-  Do not exit with error when pattern is unmatched
-* **`    --threads`**=*`INT`* —
-  Number of threads to use. Set to 1 for using only 1 CPU core.
-
-## Available positional items:
-
-* *`PATH`* —
-  Single file, path or list of paths. Glob patterns are also supported. (Be sure to quote them, otherwise your shell may expand them before passing.) Exclude patterns with `!` prefix like `'!**/fixtures/*.js'` are also supported. If not provided, current working directory is used.
-
-## Available options:
-
-* **`-h`**, **`--help`** —
-  Prints help information
-* **`-V`**, **`--version`** —
-  Prints version information
 
 ---
 

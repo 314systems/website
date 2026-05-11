@@ -1,6 +1,7 @@
 ---
 url: /docs/guide/usage/formatter/ignore-files.md
 ---
+
 # Ignore files
 
 Oxfmt provides several ways to exclude files from formatting.

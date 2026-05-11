@@ -10,19 +10,20 @@
 - [All Benchmarks](/docs/guide/benchmarks.md)
 - [AST](/docs/contribute/parser/ast.md)
 - [AST Tools](/docs/learn/architecture/ast-tools.md)
-- [Automatic fixes](/docs/guide/usage/linter/automatic-fixes.md): Apply safe, suggested, and dangerous fixes with Oxlint.
-- [Built-in Plugins](/docs/guide/usage/linter/plugins.md): Enable built in plugin rule sets and extend Oxlint with ESLint compatible JavaScript plugins.
+- [Automatic fixes | Oxlint](/docs/guide/usage/linter/automatic-fixes.md): Apply safe, suggested, and dangerous fixes with Oxlint.
 - [Built-in Plugins](/docs/guide/usage/transformer/plugins.md)
-- [Command-line Interface](/docs/guide/usage/linter/cli.md)
-- [Command-line Interface](/docs/guide/usage/formatter/cli.md)
-- [Configuration](/docs/guide/usage/linter/config.md): Configure Oxlint using .oxlintrc.json or oxlint.config.ts.
-- [Configuration](/docs/guide/usage/formatter/config.md): Configure Oxfmt using a .oxfmtrc.json file.
-- [Configuration options for the Oxfmt.](/docs/guide/usage/formatter/config-file-reference.md)
+- [Built-in Plugins | Oxlint](/docs/guide/usage/linter/plugins.md): Enable built in plugin rule sets and extend Oxlint with ESLint compatible JavaScript plugins.
+- [Command-line Interface | Oxfmt](/docs/guide/usage/formatter/cli.md)
+- [Command-line Interface | Oxlint](/docs/guide/usage/linter/cli.md)
+- [Config file reference | Oxlint](/docs/guide/usage/linter/config-file-reference.md)
+- [Configuration | Oxfmt](/docs/guide/usage/formatter/config.md): Configure Oxfmt using a .oxfmtrc.json file.
+- [Configuration | Oxlint](/docs/guide/usage/linter/config.md): Configure Oxlint using .oxlintrc.json or oxlint.config.ts.
+- [Configuration file reference | Oxfmt](/docs/guide/usage/formatter/config-file-reference.md)
 - [Configuration options for the Oxfmt.](/docs/guide/usage/formatter/generated-config.md)
 - [Dead Code Elimination](/docs/guide/usage/minifier/dead-code-elimination.md)
 - [Dealing with Errors](/docs/learn/parser_in_rust/errors.md)
 - [Debugging](/docs/contribute/debugging.md)
-- [Embedded Formatting](/docs/guide/usage/formatter/embedded-formatting.md)
+- [Embedded Formatting | Oxfmt](/docs/guide/usage/formatter/embedded-formatting.md)
 - [Endorsements](/endorsements.md)
 - [eslint/accessor-pairs](/docs/guide/usage/linter/rules/eslint/accessor-pairs.md)
 - [eslint/array-callback-return](/docs/guide/usage/linter/rules/eslint/array-callback-return.md)
@@ -208,9 +209,8 @@
 - [Getting Started](/docs/guide/introduction.md)
 - [Global Variable Replacement](/docs/guide/usage/transformer/global-variable-replacement.md)
 - [Grammar](/docs/learn/ecmascript/grammar.md)
-- [Ignore files](/docs/guide/usage/formatter/ignore-files.md)
-- [Ignores](/docs/guide/usage/linter/ignore-files.md): Control which files Oxlint lints.
-- [Ignoring](/docs/guide/usage/formatter/ignoring.md)
+- [Ignore files | Oxfmt](/docs/guide/usage/formatter/ignore-files.md)
+- [Ignore files | Oxlint](/docs/guide/usage/linter/ignore-files.md): Control which files Oxlint lints.
 - [import/consistent-type-specifier-style](/docs/guide/usage/linter/rules/import/consistent-type-specifier-style.md)
 - [import/default](/docs/guide/usage/linter/rules/import/default.md)
 - [import/export](/docs/guide/usage/linter/rules/import/export.md)
@@ -243,8 +243,8 @@
 - [import/no-webpack-loader-syntax](/docs/guide/usage/linter/rules/import/no-webpack-loader-syntax.md)
 - [import/prefer-default-export](/docs/guide/usage/linter/rules/import/prefer-default-export.md)
 - [import/unambiguous](/docs/guide/usage/linter/rules/import/unambiguous.md)
-- [Inline ignore comments](/docs/guide/usage/linter/ignore-comments.md): Disable specific rules inline using Oxlint ignore comments
-- [Inline ignore comments](/docs/guide/usage/formatter/ignore-comments.md)
+- [Inline ignore comments | Oxfmt](/docs/guide/usage/formatter/ignore-comments.md)
+- [Inline ignore comments | Oxlint](/docs/guide/usage/linter/ignore-comments.md): Disable specific rules inline using Oxlint ignore comments
 - [Introduction](/docs/contribute/introduction.md)
 - [Introduction](/docs/learn/parser_in_rust/intro.md)
 - [Isolated Declarations Emit](/docs/guide/usage/transformer/isolated-declarations.md)
@@ -308,7 +308,7 @@
 - [jest/valid-expect](/docs/guide/usage/linter/rules/jest/valid-expect.md)
 - [jest/valid-expect-in-promise](/docs/guide/usage/linter/rules/jest/valid-expect-in-promise.md)
 - [jest/valid-title](/docs/guide/usage/linter/rules/jest/valid-title.md)
-- [JS Plugins](/docs/guide/usage/linter/js-plugins.md)
+- [JS Plugins | Oxlint](/docs/guide/usage/linter/js-plugins.md)
 - [jsdoc/check-access](/docs/guide/usage/linter/rules/jsdoc/check-access.md)
 - [jsdoc/check-property-names](/docs/guide/usage/linter/rules/jsdoc/check-property-names.md)
 - [jsdoc/check-tag-names](/docs/guide/usage/linter/rules/jsdoc/check-tag-names.md)
@@ -364,14 +364,14 @@
 - [Lexer](/docs/learn/parser_in_rust/lexer.md)
 - [Linter](/docs/contribute/linter.md)
 - [Linter](/docs/learn/architecture/linter.md)
-- [LSP Options](/docs/guide/usage/linter/lsp-config-reference.md)
+- [LSP Options | Oxlint](/docs/guide/usage/linter/lsp-config-reference.md)
 - [Mangling](/docs/guide/usage/minifier/mangling.md)
-- [Migrate from ESLint](/docs/guide/usage/linter/migrate-from-eslint.md)
-- [Migrate from Prettier](/docs/guide/usage/formatter/migrate-from-prettier.md)
+- [Migrate from ESLint | Oxlint](/docs/guide/usage/linter/migrate-from-eslint.md)
+- [Migrate from Prettier | Oxfmt](/docs/guide/usage/formatter/migrate-from-prettier.md)
 - [Minifier](/docs/contribute/minifier.md)
 - [Minifier](/docs/guide/usage/minifier.md)
-- [Multi-file analysis](/docs/guide/usage/linter/multi-file-analysis.md): Project-wide linting for import cycles and cross-file issues
-- [Nested configuration files](/docs/guide/usage/linter/nested-config.md): Use multiple configuration files to apply different Oxlint settings to different parts of a repository.
+- [Multi-file analysis | Oxlint](/docs/guide/usage/linter/multi-file-analysis.md): Project-wide linting for import cycles and cross-file issues
+- [Nested configuration files | Oxlint](/docs/guide/usage/linter/nested-config.md): Use multiple configuration files to apply different Oxlint settings to different parts of a repository.
 - [nextjs/google-font-display](/docs/guide/usage/linter/rules/nextjs/google-font-display.md)
 - [nextjs/google-font-preconnect](/docs/guide/usage/linter/rules/nextjs/google-font-preconnect.md)
 - [nextjs/inline-script-id](/docs/guide/usage/linter/rules/nextjs/inline-script-id.md)
@@ -400,7 +400,7 @@
 - [node/no-path-concat](/docs/guide/usage/linter/rules/node/no-path-concat.md)
 - [node/no-process-env](/docs/guide/usage/linter/rules/node/no-process-env.md)
 - [On Media](/docs/guide/media.md)
-- [Output formats](/docs/guide/usage/linter/output-formats.md): Output linting results in various formats for CI or human consumption
+- [Output formats | Oxlint](/docs/guide/usage/linter/output-formats.md): Output linting results in various formats for CI or human consumption
 - [oxc/approx-constant](/docs/guide/usage/linter/rules/oxc/approx-constant.md)
 - [oxc/bad-array-method-on-arguments](/docs/guide/usage/linter/rules/oxc/bad-array-method-on-arguments.md)
 - [oxc/bad-bitwise-operator](/docs/guide/usage/linter/rules/oxc/bad-bitwise-operator.md)
@@ -430,7 +430,6 @@
 - [Oxfmt](/docs/guide/usage/formatter.md)
 - [Oxlint](/docs/guide/usage/linter.md)
 - [Oxlint & Oxfmt Compatibility](/compatibility.md): Check which JavaScript frameworks and file types are supported by Oxlint (linting) and Oxfmt (formatting).
-- [Oxlint Configuration File](/docs/guide/usage/linter/config-file-reference.md)
 - [Oxlint Configuration File](/docs/guide/usage/linter/generated-config.md)
 - [Parser](/docs/contribute/parser.md)
 - [Parser](/docs/guide/usage/parser.md)
@@ -456,8 +455,8 @@
 - [promise/prefer-catch](/docs/guide/usage/linter/rules/promise/prefer-catch.md)
 - [promise/spec-only](/docs/guide/usage/linter/rules/promise/spec-only.md)
 - [promise/valid-params](/docs/guide/usage/linter/rules/promise/valid-params.md)
-- [Quickstart](/docs/guide/usage/linter/quickstart.md): Install Oxlint and learn the common workflows.
-- [Quickstart](/docs/guide/usage/formatter/quickstart.md): Install Oxfmt and learn the common workflows.
+- [Quickstart | Oxfmt](/docs/guide/usage/formatter/quickstart.md): Install Oxfmt and learn the common workflows.
+- [Quickstart | Oxlint](/docs/guide/usage/linter/quickstart.md): Install Oxlint and learn the common workflows.
 - [react-perf/jsx-no-jsx-as-prop](/docs/guide/usage/linter/rules/react_perf/jsx-no-jsx-as-prop.md)
 - [react-perf/jsx-no-new-array-as-prop](/docs/guide/usage/linter/rules/react_perf/jsx-no-new-array-as-prop.md)
 - [react-perf/jsx-no-new-function-as-prop](/docs/guide/usage/linter/rules/react_perf/jsx-no-new-function-as-prop.md)
@@ -524,14 +523,14 @@
 - [References](/docs/learn/references.md)
 - [Resolver](/docs/contribute/resolver.md)
 - [Resolver](/docs/guide/usage/resolver.md)
-- [Rules](/docs/guide/usage/linter/rules.md)
+- [Rules | Oxlint](/docs/guide/usage/linter/rules.md)
 - [Security Policy](/docs/contribute/security.md)
 - [Semantic Analysis](/docs/learn/parser_in_rust/semantic_analysis.md)
-- [Setup CI and other integrations](/docs/guide/usage/linter/ci.md): Run Oxlint in CI or as a git hook.
-- [Setup CI and other integrations](/docs/guide/usage/formatter/ci.md): Run Oxfmt in CI or as a git hook.
-- [Setup editors](/docs/guide/usage/linter/editors.md): Configure Oxlint in VS Code, Zed, JetBrains, and other editors.
-- [Setup editors](/docs/guide/usage/formatter/editors.md): Configure Oxfmt in VS Code, Zed, JetBrains, and other editors.
-- [Sorting](/docs/guide/usage/formatter/sorting.md)
+- [Setup CI and other integrations | Oxfmt](/docs/guide/usage/formatter/ci.md): Run Oxfmt in CI or as a git hook.
+- [Setup CI and other integrations | Oxlint](/docs/guide/usage/linter/ci.md): Run Oxlint in CI or as a git hook.
+- [Setup editors | Oxfmt](/docs/guide/usage/formatter/editors.md): Configure Oxfmt in VS Code, Zed, JetBrains, and other editors.
+- [Setup editors | Oxlint](/docs/guide/usage/linter/editors.md): Configure Oxlint in VS Code, Zed, JetBrains, and other editors.
+- [Sorting | Oxfmt](/docs/guide/usage/formatter/sorting.md)
 - [Specification](/docs/learn/ecmascript/spec.md)
 - [Syntax Lowering](/docs/guide/usage/transformer/lowering.md)
 - [Syntax Normalization](/docs/guide/usage/minifier/syntax-normalization.md)
@@ -540,7 +539,7 @@
 - [Transformer](/docs/contribute/transformer.md)
 - [Transformer](/docs/guide/usage/transformer.md)
 - [Troubleshooting](/docs/guide/troubleshooting.md)
-- [Type-Aware Linting](/docs/guide/usage/linter/type-aware.md): Linting with type information.
+- [Type-Aware Linting | Oxlint](/docs/guide/usage/linter/type-aware.md): Linting with type information.
 - [TypeScript](/docs/guide/usage/transformer/typescript.md)
 - [typescript/adjacent-overload-signatures](/docs/guide/usage/linter/rules/typescript/adjacent-overload-signatures.md)
 - [typescript/array-type](/docs/guide/usage/linter/rules/typescript/array-type.md)
@@ -781,11 +780,11 @@
 - [unicorn/switch-case-break-position](/docs/guide/usage/linter/rules/unicorn/switch-case-break-position.md)
 - [unicorn/text-encoding-identifier-case](/docs/guide/usage/linter/rules/unicorn/text-encoding-identifier-case.md)
 - [unicorn/throw-new-error](/docs/guide/usage/linter/rules/unicorn/throw-new-error.md)
-- [Unsupported features](/docs/guide/usage/formatter/unsupported-features.md)
+- [Unsupported features | Oxfmt](/docs/guide/usage/formatter/unsupported-features.md)
+- [Untitled](/docs/guide/usage/formatter/generated-cli.md)
 - [Untitled](/docs/guide/usage/linter/generated-cli.md)
 - [Untitled](/docs/guide/usage/linter/generated-lsp-config.md)
-- [Untitled](/docs/guide/usage/formatter/generated-cli.md)
-- [Versioning policy](/docs/guide/usage/linter/versioning.md)
+- [Versioning policy | Oxlint](/docs/guide/usage/linter/versioning.md)
 - [vitest/consistent-each-for](/docs/guide/usage/linter/rules/vitest/consistent-each-for.md)
 - [vitest/consistent-test-filename](/docs/guide/usage/linter/rules/vitest/consistent-test-filename.md)
 - [vitest/consistent-test-it](/docs/guide/usage/linter/rules/vitest/consistent-test-it.md)
@@ -883,4 +882,4 @@
 - [vue/valid-define-props](/docs/guide/usage/linter/rules/vue/valid-define-props.md)
 - [What is Oxc?](/docs/guide/what-is-oxc.md): The fastest toolchain for JavaScript and TypeScript.
 - [Whitespace Stripping](/docs/guide/usage/minifier/whitespace-stripping.md)
-- [Writing JS Plugins](/docs/guide/usage/linter/writing-js-plugins.md)
+- [Writing JS Plugins | Oxlint](/docs/guide/usage/linter/writing-js-plugins.md)

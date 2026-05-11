@@ -1,6 +1,7 @@
 ---
 url: /docs/guide/usage/formatter/migrate-from-prettier.md
 ---
+
 # Migrate from Prettier
 
 This guide covers migrating from Prettier to Oxfmt.

@@ -1,6 +1,7 @@
 ---
 url: /docs/guide/usage/linter/migrate-from-eslint.md
 ---
+
 # Migrate from ESLint
 
 This guide is for existing JavaScript and TypeScript projects that currently use ESLint and want to migrate to Oxlint.
