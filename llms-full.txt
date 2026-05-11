@@ -926,20 +926,57 @@ visitor.visit_program(&program);
 
 ### Mutable Visitor
 
-For transformations, use the mutable visitor:
+`VisitMut` can be used to modify the AST during traversal.
+
+For example, to transform binary addition of string literals into a single string literal:
 
 ```rust
-use oxc_ast::visit::{VisitMut, walk_mut};
+use oxc_ast::AstBuilder;
+use oxc_ast_visit::{VisitMut, walk_mut};
+use oxc_str::Str;
 
-struct MyTransformer;
+struct MyTransformer<'a> {
+    pub builder: &'a AstBuilder<'a>,
+}
 
-impl<'a> VisitMut<'a> for MyTransformer {
-    fn visit_binary_expression(&mut self, expr: &mut BinaryExpression<'a>) {
-        // Transform the expression
-        if expr.operator == BinaryOperator::Addition {
-            // Modify the AST node
+impl<'a> VisitMut<'a> for MyTransformer<'a> {
+    fn visit_expression(&mut self, expr: &mut Expression<'a>) {
+        // Detect the expression type which you want to modify when changing from one enum variant to another.
+        if let Expression::BinaryExpression(bin_expr) = expr
+            && let (
+                BinaryOperator::Addition,
+                Expression::StringLiteral(sl),
+                Expression::StringLiteral(sr),
+            ) = (bin_expr.operator, &bin_expr.left, &bin_expr.right)
+        {
+            let value = Str::from_strs_array_in(
+                [sl.value.as_str(), sr.value.as_str()],
+                self.builder.allocator,
+            );
+            *expr = self.builder.expression_string_literal(SPAN, value, None);
         }
-        walk_mut::walk_binary_expression_mut(self, expr);
+
+        walk_mut::walk_expression(self, expr);
+    }
+}
+```
+
+For example, to modify a binary expression without changing its type:
+
+```rust
+use oxc_ast::AstBuilder;
+use oxc_ast_visit::{VisitMut, walk_mut};
+
+struct MyTransformer<'a> {
+    pub builder: &'a AstBuilder<'a>,
+}
+
+impl<'a> VisitMut<'a> for MyTransformer<'a> {
+    fn visit_binary_expression(&mut self, expr: &mut BinaryExpression<'a>) {
+        if expr.operator == BinaryOperator::Addition {
+            // Modify the AST node. You can modify only left/right and operator parts, not the type of expression itself.
+        }
+        walk_mut::walk_binary_expression(self, expr);
     }
 }
 ```
@@ -21568,6 +21605,44 @@ The Oxc formatter is built around the same core concepts as Prettier but with si
 ---
 
 ---
+url: /docs/guide/introduction.md
+---
+
+# Getting Started
+
+[What is Oxc?](/docs/guide/what-is-oxc)
+
+## Lint or format a codebase
+
+* Lint: [Oxlint](/docs/guide/usage/linter)
+* Format: [Oxfmt](/docs/guide/usage/formatter)
+
+## Build tooling on top of Oxc
+
+* Parse JavaScript and TypeScript: [Parser](/docs/guide/usage/parser)
+* Transform TypeScript, JSX, and modern JavaScript: [Transformer](/docs/guide/usage/transformer)
+* Minify JavaScript for production builds: [Minifier](/docs/guide/usage/minifier)
+* Resolve modules for JavaScript and TypeScript: [Resolver](/docs/guide/usage/resolver)
+
+## Contribute or learn
+
+* [Contribute](/docs/contribute/introduction)
+* [Learn](/docs/learn/parser_in_rust/intro)
+
+## Other resources
+
+* [Troubleshooting](/docs/guide/troubleshooting)
+* [Benchmarks](/docs/guide/benchmarks)
+* [Projects using Oxc](/docs/guide/projects)
+* [Talks and media](/docs/guide/media)
+* [Team](/team)
+* [Endorsements](/endorsements)
+* [Release Blog](/blog/)
+* [Releases](https://github.com/oxc-project/oxc/releases)
+
+---
+
+---
 url: /docs/contribute/development.md
 ---
 
@@ -21648,44 +21723,6 @@ macOS has an antivirus feature called XProtect that scans executables for malwar
 **Note:** This disables an OS security feature. Only do this if you're comfortable with the trade-off.
 
 More details: https://nnethercote.github.io/2025/09/04/faster-rust-builds-on-mac.html
-
----
-
----
-url: /docs/guide/introduction.md
----
-
-# Getting Started
-
-[What is Oxc?](/docs/guide/what-is-oxc)
-
-## Lint or format a codebase
-
-* Lint: [Oxlint](/docs/guide/usage/linter)
-* Format: [Oxfmt](/docs/guide/usage/formatter)
-
-## Build tooling on top of Oxc
-
-* Parse JavaScript and TypeScript: [Parser](/docs/guide/usage/parser)
-* Transform TypeScript, JSX, and modern JavaScript: [Transformer](/docs/guide/usage/transformer)
-* Minify JavaScript for production builds: [Minifier](/docs/guide/usage/minifier)
-* Resolve modules for JavaScript and TypeScript: [Resolver](/docs/guide/usage/resolver)
-
-## Contribute or learn
-
-* [Contribute](/docs/contribute/introduction)
-* [Learn](/docs/learn/parser_in_rust/intro)
-
-## Other resources
-
-* [Troubleshooting](/docs/guide/troubleshooting)
-* [Benchmarks](/docs/guide/benchmarks)
-* [Projects using Oxc](/docs/guide/projects)
-* [Talks and media](/docs/guide/media)
-* [Team](/team)
-* [Endorsements](/endorsements)
-* [Release Blog](/blog/)
-* [Releases](https://github.com/oxc-project/oxc/releases)
 
 ---
 
