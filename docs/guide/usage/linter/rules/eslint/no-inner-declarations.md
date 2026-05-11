@@ -55,6 +55,8 @@ This option is an object with the following properties:
 
 type: `"allow" | "disallow"`
 
+Controls whether function declarations in nested blocks are allowed in strict mode (ES6+ behavior).
+
 ##### `"allow"`
 
 Allow function declarations in nested blocks in strict mode (ES6+ behavior).

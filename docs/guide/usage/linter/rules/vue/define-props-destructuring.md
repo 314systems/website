@@ -9,8 +9,8 @@ allowing you to choose between requiring destructuring or prohibiting it.
 
 ### Why is this bad?
 
-By default, the rule requires you to use destructuring syntax when using `defineProps`
-instead of storing props in a variable and warns against combining `withDefaults` with destructuring.
+By default, the rule requires you to use destructuring syntax when `defineProps`
+is assigned to a variable and warns against combining `withDefaults` with destructuring.
 
 ### Examples
 
@@ -43,11 +43,15 @@ This rule accepts a configuration object with the following properties:
 
 ### destructure
 
-type: `"always" | "never"`
+type: `"only-when-assigned" | "always" | "never"`
 
-default: `"always"`
+default: `"only-when-assigned"`
 
 Require or prohibit destructuring.
+
+#### `"only-when-assigned"`
+
+Requires destructuring when `defineProps` is assigned to a variable and warns against using `withDefaults` with destructuring
 
 #### `"always"`
 

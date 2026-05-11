@@ -4,7 +4,7 @@ url: /docs/guide/usage/linter/rules/react/forbid-dom-props.md
 
 ### What it does
 
-This rule prevents passing of props to elements. This rule only applies to DOM Nodes (e.g. ) and not Components (e.g. ). The list of forbidden props can be customized with the forbid option.
+This rule prevents passing of props to elements. This rule only applies to DOM Nodes (e.g. `<div />`) and not Components (e.g. `<Component />`). The list of forbidden props can be customized with the forbid option.
 
 ### Why is this bad?
 

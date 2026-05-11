@@ -54,6 +54,8 @@ for (const i in [1, 2, 3]) {
 
 type: `"any" | "all"`
 
+Configures how destructuring assignments are handled.
+
 #### `"any"`
 
 Warn if any of the variables in a destructuring assignment should be `const`.

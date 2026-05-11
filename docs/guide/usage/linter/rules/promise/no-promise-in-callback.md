@@ -30,6 +30,16 @@ Examples of **correct** code for this rule:
 promisify(doSomething)().then(doSomethingElse).then(console.log).catch(console.error);
 ```
 
+## Configuration
+
+### exemptDeclarations
+
+type: `boolean`
+
+default: `false`
+
+Whether or not to exempt function declarations. Defaults to `false`.
+
 ## How to use
 
 ## Version

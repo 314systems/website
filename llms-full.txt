@@ -1952,6 +1952,8 @@ Example
 
 type: `Record<string, boolean>`
 
+Environments enable and disable collections of global variables.
+
 Predefine global variables.
 
 Environments specify what global variables are predefined.
@@ -2013,6 +2015,8 @@ overriding the previous ones.
 ## globals
 
 type: `Record<string, string>`
+
+Enabled or disabled specific global variables.
 
 Add or remove global variables.
 
@@ -2148,6 +2152,8 @@ Path or package name of the plugin
 
 type: `object`
 
+Oxlint config options.
+
 Options for the linter.
 
 ### options.denyWarnings
@@ -2210,6 +2216,8 @@ Note that this requires the `oxlint-tsgolint` package to be installed.
 
 type: `array`
 
+Add, remove, or otherwise reconfigure rules for specific files or groups of files.
+
 ### overrides\[n]
 
 type: `object`
@@ -2224,7 +2232,14 @@ Environments enable and disable collections of global variables.
 
 type: `string[]`
 
+A list of glob patterns to override.
+
+## Example
+
+`[ "*.test.ts", "*.spec.ts" ]`
+
 A set of glob patterns.
+Patterns are matched against paths relative to the configuration file's directory.
 
 #### overrides\[n].globals
 
@@ -2319,11 +2334,38 @@ type: `"eslint" | "react" | "unicorn" | "typescript" | "oxc" | "import" | "jsdoc
 
 type: `object`
 
+Example
+
+`.oxlintrc.json`
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+    "eqeqeq": "warn",
+    "import/no-cycle": "error",
+    "prefer-const": [
+      "error",
+      {
+        "ignoreReadBeforeAssign": true
+      }
+    ]
+  }
+}
+```
+
+See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html) for the list of
+rules.
+
 See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html)
 
 ## settings
 
 type: `object`
+
+Plugin-specific configuration for both built-in and custom plugins.
+This includes settings for built-in plugins such as `react` and `jsdoc`
+as well as configuring settings for JS custom plugins loaded via `jsPlugins`.
 
 Configure the behavior of linter plugins.
 
@@ -2523,6 +2565,23 @@ Configure Next.js plugin rules.
 #### settings.next.rootDir
 
 type: `array | string`
+
+The root directory of the Next.js project.
+
+This is particularly useful when you have a monorepo and your Next.js
+project is in a subfolder.
+
+Example:
+
+```json
+{
+  "settings": {
+    "next": {
+      "rootDir": "apps/dashboard/"
+    }
+  }
+}
+```
 
 ##### settings.next.rootDir\[n]
 
@@ -3721,16 +3780,23 @@ type: `string[]`
 
 Glob patterns to exclude from this override.
 
+A set of glob patterns.
+Patterns are matched against paths relative to the configuration file's directory.
+
 #### overrides\[n].files
 
 type: `string[]`
 
 Glob patterns to match files for this override.
-All patterns are relative to the Oxfmt configuration file.
+
+A set of glob patterns.
+Patterns are matched against paths relative to the configuration file's directory.
 
 #### overrides\[n].options
 
 type: `object`
+
+Format options to apply for matched files.
 
 ##### overrides\[n].options.arrowParens
 
@@ -4289,6 +4355,48 @@ NOTE: Paths are resolved relative to the Oxfmt configuration file.
 
 * Default: Installed Tailwind CSS's `theme.css`
 
+##### overrides\[n].options.svelte
+
+type: `object | boolean`
+
+Options for `prettier-plugin-svelte`.
+
+Pass `true` or an object to enable `.svelte` file formatting,
+or `false` (handy in overrides) / omit to disable.
+Setting `true` resets to defaults — any options inherited from a parent scope are dropped.
+
+NOTE: `prettier-plugin-svelte` requires the `svelte` package (`svelte/compiler`) at runtime,
+but Oxfmt does NOT bundle or auto-install it.
+You must install `svelte` yourself in your project, formatting will fail at runtime otherwise.
+
+* Default: Disabled
+
+###### overrides\[n].options.svelte.allowShorthand
+
+type: `boolean`
+
+Whether to allow attribute shorthand if attribute name and expression are same.
+
+* Default: `true`
+
+###### overrides\[n].options.svelte.indentScriptAndStyle
+
+type: `boolean`
+
+Whether to indent code inside `<script>` and `<style>` tags.
+
+* Default: `true`
+
+###### overrides\[n].options.svelte.sortOrder
+
+type: `string`
+
+The order in which Svelte component sections are printed.
+Format: join the keywords `options`, `scripts`, `markup`, `styles` with a `-` in the order you want;
+or `none` if you don't want to reorder anything.
+
+* Default: `"options-scripts-markup-styles"`
+
 ##### overrides\[n].options.tabWidth
 
 type: `integer`
@@ -4687,6 +4795,48 @@ Path to your Tailwind CSS stylesheet (v4).
 NOTE: Paths are resolved relative to the Oxfmt configuration file.
 
 * Default: Installed Tailwind CSS's `theme.css`
+
+## svelte
+
+type: `object | boolean`
+
+Options for `prettier-plugin-svelte`.
+
+Pass `true` or an object to enable `.svelte` file formatting,
+or `false` (handy in overrides) / omit to disable.
+Setting `true` resets to defaults — any options inherited from a parent scope are dropped.
+
+NOTE: `prettier-plugin-svelte` requires the `svelte` package (`svelte/compiler`) at runtime,
+but Oxfmt does NOT bundle or auto-install it.
+You must install `svelte` yourself in your project, formatting will fail at runtime otherwise.
+
+* Default: Disabled
+
+### svelte.allowShorthand
+
+type: `boolean`
+
+Whether to allow attribute shorthand if attribute name and expression are same.
+
+* Default: `true`
+
+### svelte.indentScriptAndStyle
+
+type: `boolean`
+
+Whether to indent code inside `<script>` and `<style>` tags.
+
+* Default: `true`
+
+### svelte.sortOrder
+
+type: `string`
+
+The order in which Svelte component sections are printed.
+Format: join the keywords `options`, `scripts`, `markup`, `styles` with a `-` in the order you want;
+or `none` if you don't want to reorder anything.
+
+* Default: `"options-scripts-markup-styles"`
 
 ## tabWidth
 
@@ -4957,16 +5107,23 @@ type: `string[]`
 
 Glob patterns to exclude from this override.
 
+A set of glob patterns.
+Patterns are matched against paths relative to the configuration file's directory.
+
 #### overrides\[n].files
 
 type: `string[]`
 
 Glob patterns to match files for this override.
-All patterns are relative to the Oxfmt configuration file.
+
+A set of glob patterns.
+Patterns are matched against paths relative to the configuration file's directory.
 
 #### overrides\[n].options
 
 type: `object`
+
+Format options to apply for matched files.
 
 ##### overrides\[n].options.arrowParens
 
@@ -5525,6 +5682,48 @@ NOTE: Paths are resolved relative to the Oxfmt configuration file.
 
 * Default: Installed Tailwind CSS's `theme.css`
 
+##### overrides\[n].options.svelte
+
+type: `object | boolean`
+
+Options for `prettier-plugin-svelte`.
+
+Pass `true` or an object to enable `.svelte` file formatting,
+or `false` (handy in overrides) / omit to disable.
+Setting `true` resets to defaults — any options inherited from a parent scope are dropped.
+
+NOTE: `prettier-plugin-svelte` requires the `svelte` package (`svelte/compiler`) at runtime,
+but Oxfmt does NOT bundle or auto-install it.
+You must install `svelte` yourself in your project, formatting will fail at runtime otherwise.
+
+* Default: Disabled
+
+###### overrides\[n].options.svelte.allowShorthand
+
+type: `boolean`
+
+Whether to allow attribute shorthand if attribute name and expression are same.
+
+* Default: `true`
+
+###### overrides\[n].options.svelte.indentScriptAndStyle
+
+type: `boolean`
+
+Whether to indent code inside `<script>` and `<style>` tags.
+
+* Default: `true`
+
+###### overrides\[n].options.svelte.sortOrder
+
+type: `string`
+
+The order in which Svelte component sections are printed.
+Format: join the keywords `options`, `scripts`, `markup`, `styles` with a `-` in the order you want;
+or `none` if you don't want to reorder anything.
+
+* Default: `"options-scripts-markup-styles"`
+
 ##### overrides\[n].options.tabWidth
 
 type: `integer`
@@ -5923,6 +6122,48 @@ Path to your Tailwind CSS stylesheet (v4).
 NOTE: Paths are resolved relative to the Oxfmt configuration file.
 
 * Default: Installed Tailwind CSS's `theme.css`
+
+## svelte
+
+type: `object | boolean`
+
+Options for `prettier-plugin-svelte`.
+
+Pass `true` or an object to enable `.svelte` file formatting,
+or `false` (handy in overrides) / omit to disable.
+Setting `true` resets to defaults — any options inherited from a parent scope are dropped.
+
+NOTE: `prettier-plugin-svelte` requires the `svelte` package (`svelte/compiler`) at runtime,
+but Oxfmt does NOT bundle or auto-install it.
+You must install `svelte` yourself in your project, formatting will fail at runtime otherwise.
+
+* Default: Disabled
+
+### svelte.allowShorthand
+
+type: `boolean`
+
+Whether to allow attribute shorthand if attribute name and expression are same.
+
+* Default: `true`
+
+### svelte.indentScriptAndStyle
+
+type: `boolean`
+
+Whether to indent code inside `<script>` and `<style>` tags.
+
+* Default: `true`
+
+### svelte.sortOrder
+
+type: `string`
+
+The order in which Svelte component sections are printed.
+Format: join the keywords `options`, `scripts`, `markup`, `styles` with a `-` in the order you want;
+or `none` if you don't want to reorder anything.
+
+* Default: `"options-scripts-markup-styles"`
 
 ## tabWidth
 
@@ -8304,6 +8545,9 @@ This option is an object with the following properties:
 
 type: `"always" | "never" | "ignore"`
 
+Configuration for whether to allow/disallow comparisons against `null`,
+e.g. `foo == null` or `foo != null`
+
 ##### `"always"`
 
 Always require triple-equals when comparing with null, `=== null`/`!== null`.
@@ -8937,6 +9181,8 @@ When true, functions with type annotations are allowed regardless of the style s
 #### overrides
 
 type: `object`
+
+Override the style specifically for named exports. Can be "expression", "declaration", or "ignore" (default).
 
 ##### overrides.namedExports
 
@@ -13897,6 +14143,8 @@ This option is an object with the following properties:
 
 type: `"allow" | "disallow"`
 
+Controls whether function declarations in nested blocks are allowed in strict mode (ES6+ behavior).
+
 ##### `"allow"`
 
 Allow function declarations in nested blocks in strict mode (ES6+ behavior).
@@ -18451,6 +18699,8 @@ Fine-grained auto-fix controls for `no-unused-vars`.
 
 type: `"off" | "suggestion" | "fix" | "safe-fix"`
 
+Controls auto-fixes for unused imports.
+
 ##### `"off"`
 
 Disable auto-fixes for this symbol kind.
@@ -18471,6 +18721,8 @@ Only applicable for imports, unavailable for variables.
 #### fix.variables
 
 type: `"off" | "suggestion" | "fix" | "safe-fix"`
+
+Controls auto-fixes for unused variables (including catch bindings).
 
 ##### `"off"`
 
@@ -19875,6 +20127,8 @@ for (const i in [1, 2, 3]) {
 
 type: `"any" | "all"`
 
+Configures how destructuring assignments are handled.
+
 #### `"any"`
 
 Warn if any of the variables in a destructuring assignment should be `const`.
@@ -20265,6 +20519,113 @@ Whether to allow calls to `Promise.reject()` with no arguments.
 ## Version
 
 This rule was added in v0.15.7.
+
+## References
+
+---
+
+---
+url: /docs/guide/usage/linter/rules/eslint/prefer-regex-literals.md
+---
+
+### What it does
+
+Disallow use of the RegExp constructor in favor of regular expression literals.
+
+### Why is this bad?
+
+There are two ways to create a regular expression:
+
+* Regular expression literals, e.g., `/abc/u`.
+* The `RegExp` constructor function, e.g., `new RegExp("abc", "u")` or `RegExp("abc", "u")`.
+
+The constructor function is particularly useful when you want to dynamically generate the pattern,
+because it takes string arguments.
+
+When using the constructor function with string literals, don't forget that the string escaping rules still apply.
+If you want to put a backslash in the pattern, you need to escape it in the string literal.
+Thus, the following are equivalent:
+
+```js
+new RegExp("^\\d\\.$");
+
+/^\d\.$/;
+
+// matches "0.", "1.", "2." ... "9."
+```
+
+In the above example, the regular expression literal is easier to read and reason about.
+Also, it's a common mistake to omit the extra `\` in the string literal, which would produce a completely different regular expression:
+
+```js
+new RegExp("^\d\.$");
+
+// equivalent to /^d.$/, matches "d1", "d2", "da", "db" ...
+```
+
+When a regular expression is known in advance, it is considered a best practice to avoid the string literal notation on top
+of the regular expression notation, and use regular expression literals instead of the constructor function.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```js
+new RegExp("abc");
+new RegExp("abc", "u");
+RegExp("abc");
+RegExp("abc", "u");
+new RegExp("\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d");
+RegExp(`^\\d\\.$`);
+new RegExp(String.raw`^\d\.$`);
+```
+
+Examples of **correct** code for this rule:
+
+```js
+/abc/;
+/abc/u;
+/\d\d\.\d\d\.\d\d\d\d/;
+/^\d\.$/;
+// RegExp constructor is allowed for dynamically generated regular expressions
+new RegExp(pattern);
+RegExp("abc", flags);
+new RegExp(prefix + "abc");
+RegExp(`${prefix}abc`);
+new RegExp(String.raw`^\d\. ${suffix}`);
+```
+
+## Configuration
+
+### disallowRedundantWrapping
+
+type: `boolean`
+
+default: `false`
+
+By default, this rule doesn’t check when a regex literal is unnecessarily wrapped in a `RegExp` constructor call.
+When the option `disallowRedundantWrapping` is set to `true`, the rule will also disallow such unnecessary patterns.
+
+Examples of **incorrect** code for `{ "disallowRedundantWrapping": true }`:
+
+```js
+new RegExp(/abc/);
+new RegExp(/abc/, "u");
+```
+
+Examples of **correct** code for `{ "disallowRedundantWrapping": true }`:
+
+```js
+/abc/;
+/abc/u;
+new RegExp(/abc/, flags);
+```
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
 
 ## References
 
@@ -21605,44 +21966,6 @@ The Oxc formatter is built around the same core concepts as Prettier but with si
 ---
 
 ---
-url: /docs/guide/introduction.md
----
-
-# Getting Started
-
-[What is Oxc?](/docs/guide/what-is-oxc)
-
-## Lint or format a codebase
-
-* Lint: [Oxlint](/docs/guide/usage/linter)
-* Format: [Oxfmt](/docs/guide/usage/formatter)
-
-## Build tooling on top of Oxc
-
-* Parse JavaScript and TypeScript: [Parser](/docs/guide/usage/parser)
-* Transform TypeScript, JSX, and modern JavaScript: [Transformer](/docs/guide/usage/transformer)
-* Minify JavaScript for production builds: [Minifier](/docs/guide/usage/minifier)
-* Resolve modules for JavaScript and TypeScript: [Resolver](/docs/guide/usage/resolver)
-
-## Contribute or learn
-
-* [Contribute](/docs/contribute/introduction)
-* [Learn](/docs/learn/parser_in_rust/intro)
-
-## Other resources
-
-* [Troubleshooting](/docs/guide/troubleshooting)
-* [Benchmarks](/docs/guide/benchmarks)
-* [Projects using Oxc](/docs/guide/projects)
-* [Talks and media](/docs/guide/media)
-* [Team](/team)
-* [Endorsements](/endorsements)
-* [Release Blog](/blog/)
-* [Releases](https://github.com/oxc-project/oxc/releases)
-
----
-
----
 url: /docs/contribute/development.md
 ---
 
@@ -21723,6 +22046,44 @@ macOS has an antivirus feature called XProtect that scans executables for malwar
 **Note:** This disables an OS security feature. Only do this if you're comfortable with the trade-off.
 
 More details: https://nnethercote.github.io/2025/09/04/faster-rust-builds-on-mac.html
+
+---
+
+---
+url: /docs/guide/introduction.md
+---
+
+# Getting Started
+
+[What is Oxc?](/docs/guide/what-is-oxc)
+
+## Lint or format a codebase
+
+* Lint: [Oxlint](/docs/guide/usage/linter)
+* Format: [Oxfmt](/docs/guide/usage/formatter)
+
+## Build tooling on top of Oxc
+
+* Parse JavaScript and TypeScript: [Parser](/docs/guide/usage/parser)
+* Transform TypeScript, JSX, and modern JavaScript: [Transformer](/docs/guide/usage/transformer)
+* Minify JavaScript for production builds: [Minifier](/docs/guide/usage/minifier)
+* Resolve modules for JavaScript and TypeScript: [Resolver](/docs/guide/usage/resolver)
+
+## Contribute or learn
+
+* [Contribute](/docs/contribute/introduction)
+* [Learn](/docs/learn/parser_in_rust/intro)
+
+## Other resources
+
+* [Troubleshooting](/docs/guide/troubleshooting)
+* [Benchmarks](/docs/guide/benchmarks)
+* [Projects using Oxc](/docs/guide/projects)
+* [Talks and media](/docs/guide/media)
+* [Team](/team)
+* [Endorsements](/endorsements)
+* [Release Blog](/blog/)
+* [Releases](https://github.com/oxc-project/oxc/releases)
 
 ---
 
@@ -23182,6 +23543,8 @@ type: `object`
 ##### pathGroupOverrides\[n].action
 
 type: `"enforce" | "ignore"`
+
+Action to take when pattern matches.
 
 Action to take for path group overrides.
 
@@ -32211,6 +32574,84 @@ This rule was added in v0.0.22.
 ---
 
 ---
+url: >-
+  /docs/guide/usage/linter/rules/jsx_a11y/no-noninteractive-element-to-interactive-role.md
+---
+
+### What it does
+
+Non-interactive HTML elements indicate *content* and *containers* in the user interface.
+Non-interactive elements include `<main>`, `<area>`, `<h1>` (through `<h6>`), `<p>`,
+`<img>`, `<li>`, `<ul>`, and `<ol>`.
+
+Interactive HTML elements indicate *controls* in the user interface.
+Interactive elements include `<a href>`, `<button>`, `<input>`, `<select>`,
+`<textarea>`.
+
+[WAI-ARIA roles](https://www.w3.org/TR/wai-aria-1.1/#usage_intro) should not be used
+to convert a non-interactive element to an interactive element. Interactive ARIA roles
+include `button`, `link`, `checkbox`, `menuitem`, `menuitemcheckbox`,
+`menuitemradio`, `option`, `radio`, `searchbox`, `switch`, and `textbox`.
+
+### Why is this bad?
+
+Overriding the semantic meaning of non-interactive elements with interactive roles
+creates confusion for assistive technology users. The element lacks the expected
+keyboard interaction patterns and focus management that interactive elements provide.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```jsx
+<h1 role="button">Click me</h1>
+<li role="link">Navigate</li>
+<article role="button">Submit</article>
+```
+
+Examples of **correct** code for this rule:
+
+```jsx
+<button>Click me</button>
+<a href="/page">Navigate</a>
+<div role="button">Submit</div>
+<ul role="menu"><li role="menuitem">Item</li></ul>
+```
+
+## Configuration
+
+This rule accepts a configuration object with the following properties:
+
+### allowed\_roles
+
+type: `Record<string, array>`
+
+A mapping of HTML element names to arrays of ARIA role strings that are
+allowed overrides for that element. For example, `{ "ul": ["menu", "tablist"] }`
+permits `<ul role="menu" />` without triggering the rule.
+
+Defaults are:
+
+```json
+{
+  "ul": ["menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
+  "ol": ["menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
+  "li": ["menuitem", "menuitemcheckbox", "menuitemradio", "row", "tab", "treeitem"],
+  "fieldset": ["radiogroup", "presentation"]
+}
+```
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
+
+## References
+
+---
+
+---
 url: /docs/guide/usage/linter/rules/jsx_a11y/no-noninteractive-tabindex.md
 ---
 
@@ -32311,14 +32752,14 @@ This rule applies for the following elements and their implicit roles:
 
 * `<nav>`: `navigation`
 * `<button>`: `button`
-* `<body>`: `document`
+* `<main>`: `main`
 
 Examples of **incorrect** code for this rule:
 
 ```jsx
 <nav role="navigation"></nav>
 <button role="button"></button>
-<body role="document"></body>
+<main role="main"></main>
 ```
 
 Examples of **correct** code for this rule:
@@ -32326,7 +32767,7 @@ Examples of **correct** code for this rule:
 ```jsx
 <nav></nav>
 <button></button>
-<body></body>
+<main></main>
 ```
 
 ## How to use
@@ -33308,6 +33749,24 @@ It gets automatically enabled when `configPath` is set.
 type: `"safe_fix" | "safe_fix_or_suggestion" | "dangerous_fix" | "dangerous_fix_or_suggestion" | "none" | "all"`
 
 What kind of fixes to generate for code actions.
+
+## rulesCustomization
+
+type: `Record<string, object>`
+
+Customization for individual rules, allows to override the linter's diagnostics and autofix.
+Example of lowering the severity of "no-unused-vars" rule to "hint" and disabling autofix for it:
+
+```json
+{
+  "rulesCustomization": {
+    "no-unused-vars": {
+      "severity": "hint",
+      "autofix": false
+    }
+  }
+}
+```
 
 ## run
 
@@ -37915,6 +38374,8 @@ Example
 
 type: `Record<string, boolean>`
 
+Environments enable and disable collections of global variables.
+
 Predefine global variables.
 
 Environments specify what global variables are predefined.
@@ -37976,6 +38437,8 @@ overriding the previous ones.
 ## globals
 
 type: `Record<string, string>`
+
+Enabled or disabled specific global variables.
 
 Add or remove global variables.
 
@@ -38111,6 +38574,8 @@ Path or package name of the plugin
 
 type: `object`
 
+Oxlint config options.
+
 Options for the linter.
 
 ### options.denyWarnings
@@ -38173,6 +38638,8 @@ Note that this requires the `oxlint-tsgolint` package to be installed.
 
 type: `array`
 
+Add, remove, or otherwise reconfigure rules for specific files or groups of files.
+
 ### overrides\[n]
 
 type: `object`
@@ -38187,7 +38654,14 @@ Environments enable and disable collections of global variables.
 
 type: `string[]`
 
+A list of glob patterns to override.
+
+## Example
+
+`[ "*.test.ts", "*.spec.ts" ]`
+
 A set of glob patterns.
+Patterns are matched against paths relative to the configuration file's directory.
 
 #### overrides\[n].globals
 
@@ -38282,11 +38756,38 @@ type: `"eslint" | "react" | "unicorn" | "typescript" | "oxc" | "import" | "jsdoc
 
 type: `object`
 
+Example
+
+`.oxlintrc.json`
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+    "eqeqeq": "warn",
+    "import/no-cycle": "error",
+    "prefer-const": [
+      "error",
+      {
+        "ignoreReadBeforeAssign": true
+      }
+    ]
+  }
+}
+```
+
+See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html) for the list of
+rules.
+
 See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html)
 
 ## settings
 
 type: `object`
+
+Plugin-specific configuration for both built-in and custom plugins.
+This includes settings for built-in plugins such as `react` and `jsdoc`
+as well as configuring settings for JS custom plugins loaded via `jsPlugins`.
 
 Configure the behavior of linter plugins.
 
@@ -38486,6 +38987,23 @@ Configure Next.js plugin rules.
 #### settings.next.rootDir
 
 type: `array | string`
+
+The root directory of the Next.js project.
+
+This is particularly useful when you have a monorepo and your Next.js
+project is in a subfolder.
+
+Example:
+
+```json
+{
+  "settings": {
+    "next": {
+      "rootDir": "apps/dashboard/"
+    }
+  }
+}
+```
 
 ##### settings.next.rootDir\[n]
 
@@ -40965,6 +41483,16 @@ Examples of **correct** code for this rule:
 promisify(doSomething)().then(doSomethingElse).then(console.log).catch(console.error);
 ```
 
+## Configuration
+
+### exemptDeclarations
+
+type: `boolean`
+
+default: `false`
+
+Whether or not to exempt function declarations. Defaults to `false`.
+
 ## How to use
 
 ## Version
@@ -42449,7 +42977,7 @@ url: /docs/guide/usage/linter/rules/react/forbid-dom-props.md
 
 ### What it does
 
-This rule prevents passing of props to elements. This rule only applies to DOM Nodes (e.g. ) and not Components (e.g. ). The list of forbidden props can be customized with the forbid option.
+This rule prevents passing of props to elements. This rule only applies to DOM Nodes (e.g. `<div />`) and not Components (e.g. `<Component />`). The list of forbidden props can be customized with the forbid option.
 
 ### Why is this bad?
 
@@ -43437,12 +43965,12 @@ url: /docs/guide/usage/linter/rules/react/jsx-key.md
 
 ### What it does
 
-Enforce `key` prop for elements in array.
+Enforce `key` prop for elements in an array.
 
 ### Why is this bad?
 
-React requires a `key` prop for elements in an array to help identify which
-items have changed, are added, or are removed.
+React [requires a `key` prop](https://react.dev/learn/rendering-lists#rendering-data-from-arrays)
+for elements in an array to help identify which items have changed, are added, or are removed.
 
 ### Examples
 
@@ -49485,6 +50013,12 @@ Enforce consistent return behavior in functions.
 Mixing value-returning and non-value-returning code paths makes control flow harder to
 reason about and frequently indicates a bug.
 
+::: warning
+If possible, prefer TypeScript's `noImplicitReturns` compiler option over this rule.
+`noImplicitReturns` uses TypeScript's type information and control-flow analysis,
+so it can catch more implicit return paths than this rule.
+:::
+
 ### Examples
 
 Examples of **incorrect** code for this rule:
@@ -50952,9 +51486,13 @@ Supports four types of specifiers:
 
 type: `"file"`
 
+Must be "file"
+
 ##### allow\[n].name
 
 type: `array | string`
+
+The name(s) of the type or value to match
 
 Name specifier that can be a single string or array of strings
 
@@ -51723,9 +52261,13 @@ Supports four types of specifiers:
 
 type: `"file"`
 
+Must be "file"
+
 ##### allowForKnownSafeCalls\[n].name
 
 type: `array | string`
+
+The name(s) of the type or value to match
 
 Name specifier that can be a single string or array of strings
 
@@ -51788,9 +52330,13 @@ Supports four types of specifiers:
 
 type: `"file"`
 
+Must be "file"
+
 ##### allowForKnownSafePromises\[n].name
 
 type: `array | string`
+
+The name(s) of the type or value to match
 
 Name specifier that can be a single string or array of strings
 
@@ -52532,9 +53078,13 @@ Supports four types of specifiers:
 
 type: `"file"`
 
+Must be "file"
+
 ##### allow\[n].name
 
 type: `array | string`
+
+The name(s) of the type or value to match
 
 Name specifier that can be a single string or array of strings
 
@@ -54769,9 +55319,13 @@ Supports four types of specifiers:
 
 type: `"file"`
 
+Must be "file"
+
 ##### allow\[n].name
 
 type: `array | string`
+
+The name(s) of the type or value to match
 
 Name specifier that can be a single string or array of strings
 
@@ -55724,9 +56278,13 @@ Supports four types of specifiers:
 
 type: `"file"`
 
+Must be "file"
+
 ##### allow\[n].name
 
 type: `array | string`
+
+The name(s) of the type or value to match
 
 Name specifier that can be a single string or array of strings
 
@@ -55927,9 +56485,13 @@ Supports four types of specifiers:
 
 type: `"file"`
 
+Must be "file"
+
 ##### allow\[n].name
 
 type: `array | string`
+
+The name(s) of the type or value to match
 
 Name specifier that can be a single string or array of strings
 
@@ -56894,9 +57456,13 @@ Supports four types of specifiers:
 
 type: `"file"`
 
+Must be "file"
+
 ##### allow\[n].name
 
 type: `array | string`
+
+The name(s) of the type or value to match
 
 Name specifier that can be a single string or array of strings
 
@@ -64426,101 +64992,6 @@ url: /docs/guide/usage/formatter/generated-cli.md
 ---
 
 ---
-url: /docs/guide/usage/linter/generated-lsp-config.md
----
-
-These options can be defined for each workspace folder separately.
-File references in the options (e.g. `configPath`, `tsConfigPath`) are resolved relative to the workspace folder.
-
-They can be sent by the client in `initialize` or `workspace/didChangeConfiguration` requests.
-If the client supports `workspace/configuration`, the server will request the options from the client.
-
-Example of `initialize` request:
-
-```json
-{
-  "processId": 123,
-  "rootUri": null,
-  "workspaceFolders": [],
-  "capabilities": {},
-  "initializationOptions": [
-    {
-      "workspaceUri": "file:///home/user/project",
-      "options": {
-        "unusedDisableDirectives": "deny",
-        "typeAware": true
-      }
-    }
-  ]
-}
-```
-
-Example of `workspace/didChangeConfiguration` request:
-
-```json
-{
-  "settings": [
-    {
-      "workspaceUri": "file:///home/user/project",
-      "options": {
-        "unusedDisableDirectives": "deny",
-        "disableNestedConfig": true
-      }
-    }
-  ]
-}
-```
-
-## configPath
-
-type: `string`
-
-Path to the config file. Similar to `--config` CLI option.
-If set, it disables searching for config files.
-
-## disableNestedConfig
-
-type: `boolean`
-
-Whether to disable nested config support. Similar to `--disable-nested-config` CLI option.
-It gets automatically enabled when `configPath` is set.
-
-## fixKind
-
-type: `"safe_fix" | "safe_fix_or_suggestion" | "dangerous_fix" | "dangerous_fix_or_suggestion" | "none" | "all"`
-
-What kind of fixes to generate for code actions.
-
-## run
-
-type: `"onSave" | "onType"`
-
-If your editor does not support `textDocument/diagnostic`,
-this option handles when diagnostics are sent to the client.
-
-## tsConfigPath
-
-type: `string`
-
-Path to the tsconfig file. Similar to `--tsconfig` CLI option.
-If set, it disables auto discovery for tsconfig files.
-
-## typeAware
-
-type: `boolean`
-
-Whether to enable/disable type-aware linting.
-It will override the root config's `typeAware` option if set.
-
-## unusedDisableDirectives
-
-type: `"allow" | "warn" | "deny"`
-
-How to handle unused disable directives. By default, they are allowed and ignored.
-
----
-
----
 url: /docs/guide/usage/linter/generated-cli.md
 ---
 
@@ -64679,6 +65150,119 @@ Arguments:
   Prints help information
 * **`-V`**, **`--version`** —
   Prints version information
+
+---
+
+---
+url: /docs/guide/usage/linter/generated-lsp-config.md
+---
+
+These options can be defined for each workspace folder separately.
+File references in the options (e.g. `configPath`, `tsConfigPath`) are resolved relative to the workspace folder.
+
+They can be sent by the client in `initialize` or `workspace/didChangeConfiguration` requests.
+If the client supports `workspace/configuration`, the server will request the options from the client.
+
+Example of `initialize` request:
+
+```json
+{
+  "processId": 123,
+  "rootUri": null,
+  "workspaceFolders": [],
+  "capabilities": {},
+  "initializationOptions": [
+    {
+      "workspaceUri": "file:///home/user/project",
+      "options": {
+        "unusedDisableDirectives": "deny",
+        "typeAware": true
+      }
+    }
+  ]
+}
+```
+
+Example of `workspace/didChangeConfiguration` request:
+
+```json
+{
+  "settings": [
+    {
+      "workspaceUri": "file:///home/user/project",
+      "options": {
+        "unusedDisableDirectives": "deny",
+        "disableNestedConfig": true
+      }
+    }
+  ]
+}
+```
+
+## configPath
+
+type: `string`
+
+Path to the config file. Similar to `--config` CLI option.
+If set, it disables searching for config files.
+
+## disableNestedConfig
+
+type: `boolean`
+
+Whether to disable nested config support. Similar to `--disable-nested-config` CLI option.
+It gets automatically enabled when `configPath` is set.
+
+## fixKind
+
+type: `"safe_fix" | "safe_fix_or_suggestion" | "dangerous_fix" | "dangerous_fix_or_suggestion" | "none" | "all"`
+
+What kind of fixes to generate for code actions.
+
+## rulesCustomization
+
+type: `Record<string, object>`
+
+Customization for individual rules, allows to override the linter's diagnostics and autofix.
+Example of lowering the severity of "no-unused-vars" rule to "hint" and disabling autofix for it:
+
+```json
+{
+  "rulesCustomization": {
+    "no-unused-vars": {
+      "severity": "hint",
+      "autofix": false
+    }
+  }
+}
+```
+
+## run
+
+type: `"onSave" | "onType"`
+
+If your editor does not support `textDocument/diagnostic`,
+this option handles when diagnostics are sent to the client.
+
+## tsConfigPath
+
+type: `string`
+
+Path to the tsconfig file. Similar to `--tsconfig` CLI option.
+If set, it disables auto discovery for tsconfig files.
+
+## typeAware
+
+type: `boolean`
+
+Whether to enable/disable type-aware linting.
+It will override the root config's `typeAware` option if set.
+
+## unusedDisableDirectives
+
+type: `"allow" | "warn" | "deny"`
+
+How to handle unused disable directives. By default, they are allowed and ignored.
 
 ---
 
@@ -69091,10 +69675,10 @@ url: /docs/guide/usage/linter/rules/vitest/valid-describe-callback.md
 This rule validates that the second parameter of a `describe()` function is a
 callback function. This callback function:
 
-* should not be
-  [async](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
 * should not contain any parameters
 * should not contain any `return` statements
+
+Vitest supports async `describe()` callbacks, so this rule allows them.
 
 ### Why is this bad?
 
@@ -69106,11 +69690,6 @@ errors.
 Examples of **incorrect** code for this rule:
 
 ```javascript
-// Async callback functions are not allowed
-describe("myFunction()", async () => {
-  // ...
-});
-
 // Callback function parameters are not allowed
 describe("myFunction()", (done) => {
   // ...
@@ -69663,8 +70242,8 @@ allowing you to choose between requiring destructuring or prohibiting it.
 
 ### Why is this bad?
 
-By default, the rule requires you to use destructuring syntax when using `defineProps`
-instead of storing props in a variable and warns against combining `withDefaults` with destructuring.
+By default, the rule requires you to use destructuring syntax when `defineProps`
+is assigned to a variable and warns against combining `withDefaults` with destructuring.
 
 ### Examples
 
@@ -69697,11 +70276,15 @@ This rule accepts a configuration object with the following properties:
 
 ### destructure
 
-type: `"always" | "never"`
+type: `"only-when-assigned" | "always" | "never"`
 
-default: `"always"`
+default: `"only-when-assigned"`
 
 Require or prohibit destructuring.
+
+#### `"only-when-assigned"`
+
+Requires destructuring when `defineProps` is assigned to a variable and warns against using `withDefaults` with destructuring
 
 #### `"always"`
 

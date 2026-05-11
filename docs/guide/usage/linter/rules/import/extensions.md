@@ -229,6 +229,8 @@ type: `object`
 
 type: `"enforce" | "ignore"`
 
+Action to take when pattern matches.
+
 Action to take for path group overrides.
 
 Determines how import extensions are validated for matching bespoke import specifiers.

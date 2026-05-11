@@ -163,6 +163,8 @@ When true, functions with type annotations are allowed regardless of the style s
 
 type: `object`
 
+Override the style specifically for named exports. Can be "expression", "declaration", or "ignore" (default).
+
 ##### overrides.namedExports
 
 type: `"ignore" | "expression" | "declaration"`

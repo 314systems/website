@@ -175,6 +175,9 @@ This option is an object with the following properties:
 
 type: `"always" | "never" | "ignore"`
 
+Configuration for whether to allow/disallow comparisons against `null`,
+e.g. `foo == null` or `foo != null`
+
 ##### `"always"`
 
 Always require triple-equals when comparing with null, `=== null`/`!== null`.
