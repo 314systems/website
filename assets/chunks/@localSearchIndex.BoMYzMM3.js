@@ -1,0 +1,1 @@
+import{t as e}from"./preload-helper.DhDwmot-.js";var t={root:()=>e(()=>import(`./@localSearchIndexroot.Bu8FOssa.js`),[])};export{t as default};

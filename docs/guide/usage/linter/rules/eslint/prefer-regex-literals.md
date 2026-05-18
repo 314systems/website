@@ -99,6 +99,6 @@ new RegExp(/abc/, flags);
 
 ## Version
 
-This rule was added in vnext.
+This rule was added in v1.64.0.
 
 ## References

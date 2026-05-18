@@ -1775,6 +1775,10 @@ Arguments:
 
 * **`-f`**, **`--format`**=*`ARG`* —
   Use a specific output format. Possible values: `checkstyle`, `default`, `agent`, `github`, `gitlab`, `json`, `junit`, `sarif`, `stylish`, `unix`
+* **`    --debug`**=*`OPTIONS`* —
+  Enable debug output options. Options are comma-separated. Possible values:
+
+- `timings` - Enable per-rule timing information.
 
 ## Miscellaneous
 
@@ -2132,7 +2136,7 @@ Note: The following plugin names are reserved because they are implemented nativ
 * jsdoc
 * jest
 * vitest
-* jsx-a11y
+* jsx-a11y (includes jsx-a11y-x)
 * nextjs
 * react-perf
 * promise
@@ -2278,7 +2282,7 @@ Note: The following plugin names are reserved because they are implemented nativ
 * jsdoc
 * jest
 * vitest
-* jsx-a11y
+* jsx-a11y (includes jsx-a11y-x)
 * nextjs
 * react-perf
 * promise
@@ -4198,7 +4202,7 @@ Specifies a prefix for identifying internal imports.
 
 This is useful for distinguishing your own modules from external dependencies.
 
-* Default: `["~/", "@/"]`
+* Default: `["~/", "@/", "#"]`
 
 ###### overrides\[n].options.sortImports.newlinesBetween
 
@@ -4639,7 +4643,7 @@ Specifies a prefix for identifying internal imports.
 
 This is useful for distinguishing your own modules from external dependencies.
 
-* Default: `["~/", "@/"]`
+* Default: `["~/", "@/", "#"]`
 
 ### sortImports.newlinesBetween
 
@@ -5525,7 +5529,7 @@ Specifies a prefix for identifying internal imports.
 
 This is useful for distinguishing your own modules from external dependencies.
 
-* Default: `["~/", "@/"]`
+* Default: `["~/", "@/", "#"]`
 
 ###### overrides\[n].options.sortImports.newlinesBetween
 
@@ -5966,7 +5970,7 @@ Specifies a prefix for identifying internal imports.
 
 This is useful for distinguishing your own modules from external dependencies.
 
-* Default: `["~/", "@/"]`
+* Default: `["~/", "@/", "#"]`
 
 ### sortImports.newlinesBetween
 
@@ -13976,6 +13980,58 @@ This rule was added in v1.33.0.
 ---
 
 ---
+url: /docs/guide/usage/linter/rules/eslint/no-implicit-globals.md
+---
+
+### What it does
+
+Disallows declarations in the global scope, global variable leaks, and
+writes or redeclarations of read-only globals.
+
+### Why is this bad?
+
+Browser scripts share a global scope. Top-level `var` and `function`
+declarations, and assignments to undeclared variables in sloppy mode,
+create globals that can collide with other scripts.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```js
+var foo = 1;
+function bar() {}
+baz = 1;
+```
+
+Examples of **correct** code for this rule:
+
+```js
+window.foo = 1;
+(function () {
+  var bar = 1;
+})();
+```
+
+## Configuration
+
+### lexicalBindings
+
+type: `boolean`
+
+default: `false`
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
+
+## References
+
+---
+
+---
 url: /docs/guide/usage/linter/rules/eslint/no-import-assign.md
 ---
 
@@ -20072,6 +20128,96 @@ This rule was added in v0.15.13.
 ---
 
 ---
+url: /docs/guide/usage/linter/rules/eslint/prefer-arrow-callback.md
+---
+
+### What it does
+
+Requires using arrow functions for callbacks.
+
+### Why is this bad?
+
+Arrow functions are generally better suited for callbacks because they:
+
+* inherit `this` from the surrounding scope, avoiding a common source of bugs;
+* are shorter and easier to read;
+* cannot be used as constructors, which is desirable for callbacks.
+
+### Options
+
+```json
+{
+  "prefer-arrow-callback": [
+    "error",
+    {
+      "allowNamedFunctions": false,
+      "allowUnboundThis": true
+    }
+  ]
+}
+```
+
+* `allowNamedFunctions` (default `false`) — when `true`, named function
+  expressions are allowed.
+* `allowUnboundThis` (default `true`) — when `false`, function
+  expressions that reference `this` are reported even when they are not
+  bound to a `this` value.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```js
+foo(function (a) {
+  return a;
+});
+foo(
+  function () {
+    return this.a;
+  }.bind(this),
+);
+```
+
+Examples of **correct** code for this rule:
+
+```js
+foo((a) => a);
+foo(function* () {
+  yield;
+});
+foo(function () {
+  this;
+});
+foo(function bar() {
+  bar();
+});
+```
+
+## Configuration
+
+### allowNamedFunctions
+
+type: `boolean`
+
+default: `false`
+
+### allowUnboundThis
+
+type: `boolean`
+
+default: `true`
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
+
+## References
+
+---
+
+---
 url: /docs/guide/usage/linter/rules/eslint/prefer-const.md
 ---
 
@@ -20625,7 +20771,7 @@ new RegExp(/abc/, flags);
 
 ## Version
 
-This rule was added in vnext.
+This rule was added in v1.64.0.
 
 ## References
 
@@ -21966,6 +22112,44 @@ The Oxc formatter is built around the same core concepts as Prettier but with si
 ---
 
 ---
+url: /docs/guide/introduction.md
+---
+
+# Getting Started
+
+[What is Oxc?](/docs/guide/what-is-oxc)
+
+## Lint or format a codebase
+
+* Lint: [Oxlint](/docs/guide/usage/linter)
+* Format: [Oxfmt](/docs/guide/usage/formatter)
+
+## Build tooling on top of Oxc
+
+* Parse JavaScript and TypeScript: [Parser](/docs/guide/usage/parser)
+* Transform TypeScript, JSX, and modern JavaScript: [Transformer](/docs/guide/usage/transformer)
+* Minify JavaScript for production builds: [Minifier](/docs/guide/usage/minifier)
+* Resolve modules for JavaScript and TypeScript: [Resolver](/docs/guide/usage/resolver)
+
+## Contribute or learn
+
+* [Contribute](/docs/contribute/introduction)
+* [Learn](/docs/learn/parser_in_rust/intro)
+
+## Other resources
+
+* [Troubleshooting](/docs/guide/troubleshooting)
+* [Benchmarks](/docs/guide/benchmarks)
+* [Projects using Oxc](/docs/guide/projects)
+* [Talks and media](/docs/guide/media)
+* [Team](/team)
+* [Endorsements](/endorsements)
+* [Release Blog](/blog/)
+* [Releases](https://github.com/oxc-project/oxc/releases)
+
+---
+
+---
 url: /docs/contribute/development.md
 ---
 
@@ -22046,44 +22230,6 @@ macOS has an antivirus feature called XProtect that scans executables for malwar
 **Note:** This disables an OS security feature. Only do this if you're comfortable with the trade-off.
 
 More details: https://nnethercote.github.io/2025/09/04/faster-rust-builds-on-mac.html
-
----
-
----
-url: /docs/guide/introduction.md
----
-
-# Getting Started
-
-[What is Oxc?](/docs/guide/what-is-oxc)
-
-## Lint or format a codebase
-
-* Lint: [Oxlint](/docs/guide/usage/linter)
-* Format: [Oxfmt](/docs/guide/usage/formatter)
-
-## Build tooling on top of Oxc
-
-* Parse JavaScript and TypeScript: [Parser](/docs/guide/usage/parser)
-* Transform TypeScript, JSX, and modern JavaScript: [Transformer](/docs/guide/usage/transformer)
-* Minify JavaScript for production builds: [Minifier](/docs/guide/usage/minifier)
-* Resolve modules for JavaScript and TypeScript: [Resolver](/docs/guide/usage/resolver)
-
-## Contribute or learn
-
-* [Contribute](/docs/contribute/introduction)
-* [Learn](/docs/learn/parser_in_rust/intro)
-
-## Other resources
-
-* [Troubleshooting](/docs/guide/troubleshooting)
-* [Benchmarks](/docs/guide/benchmarks)
-* [Projects using Oxc](/docs/guide/projects)
-* [Talks and media](/docs/guide/media)
-* [Team](/team)
-* [Endorsements](/endorsements)
-* [Release Blog](/blog/)
-* [Releases](https://github.com/oxc-project/oxc/releases)
 
 ---
 
@@ -30994,6 +31140,94 @@ This rule was added in v0.4.3.
 ---
 
 ---
+url: /docs/guide/usage/linter/rules/jsdoc/require-throws-description.md
+---
+
+### What it does
+
+Requires a description for `@throws` tags.
+
+### Why is this bad?
+
+A `@throws` tag should explain the condition or reason an error may be thrown.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```js
+/**
+ * @throws {Error}
+ */
+function quux() {
+  throw new Error("error");
+}
+```
+
+Examples of **correct** code for this rule:
+
+```js
+/**
+ * @throws {Error} Has a description
+ */
+function quux() {
+  throw new Error("error");
+}
+```
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
+
+## References
+
+---
+
+---
+url: /docs/guide/usage/linter/rules/jsdoc/require-throws-type.md
+---
+
+### What it does
+
+Requires a type on the `@throws` tag.
+
+### Why is this bad?
+
+A `@throws` tag should document the type of error that may be thrown.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```js
+/** @throws */
+function quux() {
+  throw new Error("error");
+}
+```
+
+Examples of **correct** code for this rule:
+
+```js
+/** @throws {Error} */
+function quux() {
+  throw new Error("error");
+}
+```
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
+
+## References
+
+---
+
+---
 url: /docs/guide/usage/linter/rules/jsdoc/require-yields.md
 ---
 
@@ -31064,6 +31298,44 @@ When `true`, require `@yields` when a `@generator` tag is present.
 ## Version
 
 This rule was added in v0.3.2.
+
+## References
+
+---
+
+---
+url: /docs/guide/usage/linter/rules/jsdoc/require-yields-type.md
+---
+
+### What it does
+
+Requires a type on the `@yields` tag.
+
+### Why is this bad?
+
+A `@yields` tag should document the type yielded by the generator.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```js
+/** @yields */
+function* quux() {}
+```
+
+Examples of **correct** code for this rule:
+
+```js
+/** @yields {string} */
+function* quux() {}
+```
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
 
 ## References
 
@@ -31841,6 +32113,102 @@ This rule was added in v0.2.1.
 ---
 
 ---
+url: /docs/guide/usage/linter/rules/jsx_a11y/control-has-associated-label.md
+---
+
+### What it does
+
+Enforce that a control (an interactive element) has a text label.
+
+### Why is this bad?
+
+An interactive element (such as a `<button>`) without an accessible
+text label makes it difficult or impossible for users of assistive
+technologies to understand the purpose of the control.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```jsx
+<button />
+<input type="text" />
+<a href="/path" />
+<th />
+<div role="button" />
+<div role="checkbox" />
+```
+
+Examples of **correct** code for this rule:
+
+```jsx
+<button>Save</button>
+<button aria-label="Save" />
+<label>Name <input type="text" /></label>
+<a href="/path">Learn more</a>
+<th>Column Header</th>
+<div role="button">Submit</div>
+<div role="checkbox" aria-labelledby="label_id" />
+```
+
+## Configuration
+
+This rule accepts a configuration object with the following properties:
+
+### controlComponents
+
+type: `string[]`
+
+default: `[]`
+
+Custom JSX components to be treated as interactive controls.
+
+### depth
+
+type: `integer`
+
+default: `2`
+
+Maximum depth to search for an accessible label within the element.
+Defaults to `2`.
+
+### ignoreElements
+
+type: `string[]`
+
+default: `[]`
+
+Elements to ignore (in addition to the default ignore list).
+Defaults to `[]`.
+
+### ignoreRoles
+
+type: `string[]`
+
+default: `[]`
+
+Interactive roles to ignore.
+Defaults to `[]`.
+
+### labelAttributes
+
+type: `string[]`
+
+default: `[]`
+
+Additional attributes to check for accessible label text.
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
+
+## References
+
+---
+
+---
 url: /docs/guide/usage/linter/rules/jsx_a11y/heading-has-content.md
 ---
 
@@ -32578,6 +32946,112 @@ This rule was added in v0.0.22.
 
 ---
 url: >-
+  /docs/guide/usage/linter/rules/jsx_a11y/no-interactive-element-to-noninteractive-role.md
+---
+
+### What it does
+
+Interactive HTML elements indicate controls in the user interface. Interactive elements include `<a href>`, `<button>`, `<input>`, `<select>`, `<textarea>`.
+
+WAI-ARIA roles should not be used to convert an interactive element to a non-interactive element.
+Non-interactive ARIA roles include `article`, `banner`, `complementary`, `img`, `listitem`, `main`, `region` and `tooltip`.
+
+### Why is this bad?
+
+Using a non-interactive role on an interactive element can confuse assistive technology users.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```jsx
+<button role="img">Save</button>
+```
+
+Examples of **correct** code for this rule:
+
+```jsx
+<div role="img">
+  <button>Save</button>
+</div>
+```
+
+## Configuration
+
+This rule accepts a configuration object with the following properties:
+
+type: `object`
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
+
+## References
+
+---
+
+---
+url: >-
+  /docs/guide/usage/linter/rules/jsx_a11y/no-noninteractive-element-interactions.md
+---
+
+### What it does
+
+Prevents non-interactive HTML elements and elements with non-interactive ARIA roles from
+being assigned mouse or keyboard event handlers.
+
+### Why is this bad?
+
+Non-interactive elements such as `<main>`, `<h1>`, `<p>`, `<img>`, `<li>`, `<ul>`, and
+`<ol>` represent content or containers. Adding interaction handlers to them can make the
+UI difficult or impossible to operate with assistive technology.
+
+Move the handler to an interactive element, such as `<button>` or `<a href>`, or use an
+element with an appropriate interactive role and keyboard behavior.
+
+### Examples
+
+Examples of **incorrect** code for this rule:
+
+```jsx
+<li onClick={() => {}} />
+<div role="listitem" onKeyDown={() => {}} />
+```
+
+Examples of **correct** code for this rule:
+
+```jsx
+<button onClick={() => {}} />
+<div role="button" onClick={() => {}} />
+<div onClick={() => {}} role="presentation" />
+```
+
+## Configuration
+
+This rule accepts a configuration object with the following properties:
+
+### handlers
+
+type: `string[]`
+
+default: `null`
+
+An array of event handler names that should trigger this rule.
+
+## How to use
+
+## Version
+
+This rule was added in vnext.
+
+## References
+
+---
+
+---
+url: >-
   /docs/guide/usage/linter/rules/jsx_a11y/no-noninteractive-element-to-interactive-role.md
 ---
 
@@ -32648,7 +33122,7 @@ Defaults are:
 
 ## Version
 
-This rule was added in vnext.
+This rule was added in v1.64.0.
 
 ## References
 
@@ -38557,7 +39031,7 @@ Note: The following plugin names are reserved because they are implemented nativ
 * jsdoc
 * jest
 * vitest
-* jsx-a11y
+* jsx-a11y (includes jsx-a11y-x)
 * nextjs
 * react-perf
 * promise
@@ -38703,7 +39177,7 @@ Note: The following plugin names are reserved because they are implemented nativ
 * jsdoc
 * jest
 * vitest
-* jsx-a11y
+* jsx-a11y (includes jsx-a11y-x)
 * nextjs
 * react-perf
 * promise
@@ -39270,185 +39744,6 @@ Test results are stored in snapshot files for tracking changes:
 ---
 
 ---
-url: /docs/learn/architecture/parser.md
----
-
-# Parser Architecture
-
-Oxc maintains its own AST and parser, which is by far the fastest and most conformant JavaScript and TypeScript (including JSX and TSX) parser written in Rust.
-
-As the parser often represents a key performance bottleneck in JavaScript tooling,
-any minor improvements can have a cascading effect on our downstream tools.
-By developing our parser, we have the opportunity to explore and implement well-researched performance techniques.
-
-## AST Design Philosophy
-
-While many existing JavaScript tools rely on [estree] as their AST specification,
-a notable drawback is its abundance of ambiguous nodes.
-This ambiguity often leads to confusion during development with [estree].
-
-The Oxc AST differs from the [estree] AST by removing ambiguous nodes and introducing distinct types.
-For example, instead of using a generic [estree] `Identifier`,
-the Oxc AST provides specific types such as `BindingIdentifier`, `IdentifierReference`, and `IdentifierName`.
-
-This clear distinction greatly enhances the development experience by aligning more closely with the ECMAScript specification.
-
-### AST Node Types
-
-```rust
-// Instead of generic Identifier
-pub struct BindingIdentifier<'a> {
-    pub span: Span,
-    pub name: Atom<'a>,
-}
-
-pub struct IdentifierReference<'a> {
-    pub span: Span,
-    pub name: Atom<'a>,
-    pub reference_id: Cell<Option<ReferenceId>>,
-}
-
-pub struct IdentifierName<'a> {
-    pub span: Span,
-    pub name: Atom<'a>,
-}
-```
-
-### Semantic Clarity
-
-This approach provides semantic clarity:
-
-* **`BindingIdentifier`**: Variable declarations (`let x = 1`)
-* **`IdentifierReference`**: Variable usage (`console.log(x)`)
-* **`IdentifierName`**: Property names (`obj.property`)
-
-## Performance Architecture
-
-### How is it so fast
-
-* **Memory Arena**: AST is allocated in a [memory arena](https://crates.io/crates/bumpalo) for fast allocation and deallocation
-* **String Optimization**: Short strings are inlined by [CompactString](https://crates.io/crates/compact_str)
-* **Minimal Heap Usage**: No other heap allocations are done except the above two
-* **Separation of Concerns**: Scope binding, symbol resolution and some syntax errors are delegated to the semantic analyzer
-
-### Memory Management Details
-
-#### Arena Allocation
-
-```rust
-use oxc_allocator::Allocator;
-
-// All AST nodes are allocated in this arena
-let allocator = Allocator::default();
-let ast_node = allocator.alloc(Expression::NumericLiteral(
-    allocator.alloc(NumericLiteral { value: 42.0, span: SPAN })
-));
-```
-
-Benefits:
-
-* **O(1) allocation**: Simple pointer bump
-* **O(1) deallocation**: Drop entire arena at once
-* **Cache-friendly**: Linear memory layout
-* **No fragmentation**: Continuous memory usage
-
-#### String Interning with CompactString
-
-```rust
-// Strings ≤ 24 bytes are stored inline (no heap allocation)
-let short_name = CompactString::from("variableName");  // Stack allocated
-let long_name = CompactString::from("a_very_long_variable_name_that_exceeds_limit");  // Heap allocated
-```
-
-This reduces memory allocations for the majority of JavaScript identifiers and string literals.
-
-## Parser Architecture
-
-### Two-Phase Design
-
-The Oxc parser follows a two-phase approach:
-
-1. **Parsing Phase**: Build AST structure with minimal semantic analysis
-2. **Semantic Phase**: Perform scope analysis, symbol resolution, and advanced error checking
-
-```rust
-// Phase 1: Parse to AST
-let parser_result = Parser::new(&allocator, &source_text, source_type).parse();
-
-// Phase 2: Semantic analysis
-let semantic_result = SemanticBuilder::new()
-    // Enable additional syntax checks not performed by the parser
-    .with_check_syntax_error(true)
-    .build(&parser_result.program);
-```
-
-### Parser Components
-
-#### Lexer
-
-* **Token generation**: Converts source text to structured tokens
-* **SIMD optimization**: Uses SIMD instructions for whitespace skipping
-* **Context-aware**: Handles regex vs division operator disambiguation
-
-#### Recursive Descent Parser
-
-* **Hand-written**: Custom implementation for maximum performance
-* **Error recovery**: Advanced error handling with meaningful messages
-* **Grammar compliance**: Follows ECMAScript specification precisely
-
-#### AST Builder
-
-* **Type safety**: Leverages Rust's type system for correctness
-* **Memory efficiency**: Direct arena allocation
-* **Builder pattern**: Convenient node construction methods
-
-## Conformance Strategy
-
-### Test Suite Coverage
-
-* **Test262**: 100% pass rate on ECMAScript conformance tests
-* **Babel**: 99.62% compatibility with Babel parser tests
-* **TypeScript**: 99.86% compatibility with TypeScript compiler tests
-
-### Error Handling Philosophy
-
-```rust
-// Meaningful error messages with source location
-pub struct OxcDiagnostic {
-    pub message: String,
-    pub span: Span,
-    pub severity: Severity,
-    pub help: Option<String>,
-}
-```
-
-The parser provides:
-
-* **Precise error locations**: Exact source positions
-* **Recovery strategies**: Continue parsing after errors
-* **Helpful suggestions**: Actionable error messages
-
-## Advanced Features
-
-### TypeScript Support
-
-* **Type stripping**: Removes TypeScript-specific syntax
-* **Decorator parsing**: Handles experimental decorators
-* **Namespace support**: Full module and namespace parsing
-* **JSX integration**: TypeScript + JSX (TSX) support
-
-### Research Areas
-
-* **SIMD text processing**: Vectorized string operations
-* **Cache optimization**: Minimize memory access patterns
-* **Branch prediction**: Optimize hot parsing paths
-* **Zero-copy parsing**: Eliminate unnecessary string copies
-
-[estree]: https://github.com/estree/estree
-
----
-
----
 url: /docs/guide/usage/parser.md
 ---
 
@@ -39919,6 +40214,185 @@ function isParenthesizedArrowFunctionExpression(): Tristate {
 ```
 
 In summary, the TypeScript parser uses a combination of lookahead (fast path) and backtracking to parse arrow functions.
+
+---
+
+---
+url: /docs/learn/architecture/parser.md
+---
+
+# Parser Architecture
+
+Oxc maintains its own AST and parser, which is by far the fastest and most conformant JavaScript and TypeScript (including JSX and TSX) parser written in Rust.
+
+As the parser often represents a key performance bottleneck in JavaScript tooling,
+any minor improvements can have a cascading effect on our downstream tools.
+By developing our parser, we have the opportunity to explore and implement well-researched performance techniques.
+
+## AST Design Philosophy
+
+While many existing JavaScript tools rely on [estree] as their AST specification,
+a notable drawback is its abundance of ambiguous nodes.
+This ambiguity often leads to confusion during development with [estree].
+
+The Oxc AST differs from the [estree] AST by removing ambiguous nodes and introducing distinct types.
+For example, instead of using a generic [estree] `Identifier`,
+the Oxc AST provides specific types such as `BindingIdentifier`, `IdentifierReference`, and `IdentifierName`.
+
+This clear distinction greatly enhances the development experience by aligning more closely with the ECMAScript specification.
+
+### AST Node Types
+
+```rust
+// Instead of generic Identifier
+pub struct BindingIdentifier<'a> {
+    pub span: Span,
+    pub name: Atom<'a>,
+}
+
+pub struct IdentifierReference<'a> {
+    pub span: Span,
+    pub name: Atom<'a>,
+    pub reference_id: Cell<Option<ReferenceId>>,
+}
+
+pub struct IdentifierName<'a> {
+    pub span: Span,
+    pub name: Atom<'a>,
+}
+```
+
+### Semantic Clarity
+
+This approach provides semantic clarity:
+
+* **`BindingIdentifier`**: Variable declarations (`let x = 1`)
+* **`IdentifierReference`**: Variable usage (`console.log(x)`)
+* **`IdentifierName`**: Property names (`obj.property`)
+
+## Performance Architecture
+
+### How is it so fast
+
+* **Memory Arena**: AST is allocated in a [memory arena](https://crates.io/crates/bumpalo) for fast allocation and deallocation
+* **String Optimization**: Short strings are inlined by [CompactString](https://crates.io/crates/compact_str)
+* **Minimal Heap Usage**: No other heap allocations are done except the above two
+* **Separation of Concerns**: Scope binding, symbol resolution and some syntax errors are delegated to the semantic analyzer
+
+### Memory Management Details
+
+#### Arena Allocation
+
+```rust
+use oxc_allocator::Allocator;
+
+// All AST nodes are allocated in this arena
+let allocator = Allocator::default();
+let ast_node = allocator.alloc(Expression::NumericLiteral(
+    allocator.alloc(NumericLiteral { value: 42.0, span: SPAN })
+));
+```
+
+Benefits:
+
+* **O(1) allocation**: Simple pointer bump
+* **O(1) deallocation**: Drop entire arena at once
+* **Cache-friendly**: Linear memory layout
+* **No fragmentation**: Continuous memory usage
+
+#### String Interning with CompactString
+
+```rust
+// Strings ≤ 24 bytes are stored inline (no heap allocation)
+let short_name = CompactString::from("variableName");  // Stack allocated
+let long_name = CompactString::from("a_very_long_variable_name_that_exceeds_limit");  // Heap allocated
+```
+
+This reduces memory allocations for the majority of JavaScript identifiers and string literals.
+
+## Parser Architecture
+
+### Two-Phase Design
+
+The Oxc parser follows a two-phase approach:
+
+1. **Parsing Phase**: Build AST structure with minimal semantic analysis
+2. **Semantic Phase**: Perform scope analysis, symbol resolution, and advanced error checking
+
+```rust
+// Phase 1: Parse to AST
+let parser_result = Parser::new(&allocator, &source_text, source_type).parse();
+
+// Phase 2: Semantic analysis
+let semantic_result = SemanticBuilder::new()
+    // Enable additional syntax checks not performed by the parser
+    .with_check_syntax_error(true)
+    .build(&parser_result.program);
+```
+
+### Parser Components
+
+#### Lexer
+
+* **Token generation**: Converts source text to structured tokens
+* **SIMD optimization**: Uses SIMD instructions for whitespace skipping
+* **Context-aware**: Handles regex vs division operator disambiguation
+
+#### Recursive Descent Parser
+
+* **Hand-written**: Custom implementation for maximum performance
+* **Error recovery**: Advanced error handling with meaningful messages
+* **Grammar compliance**: Follows ECMAScript specification precisely
+
+#### AST Builder
+
+* **Type safety**: Leverages Rust's type system for correctness
+* **Memory efficiency**: Direct arena allocation
+* **Builder pattern**: Convenient node construction methods
+
+## Conformance Strategy
+
+### Test Suite Coverage
+
+* **Test262**: 100% pass rate on ECMAScript conformance tests
+* **Babel**: 99.62% compatibility with Babel parser tests
+* **TypeScript**: 99.86% compatibility with TypeScript compiler tests
+
+### Error Handling Philosophy
+
+```rust
+// Meaningful error messages with source location
+pub struct OxcDiagnostic {
+    pub message: String,
+    pub span: Span,
+    pub severity: Severity,
+    pub help: Option<String>,
+}
+```
+
+The parser provides:
+
+* **Precise error locations**: Exact source positions
+* **Recovery strategies**: Continue parsing after errors
+* **Helpful suggestions**: Actionable error messages
+
+## Advanced Features
+
+### TypeScript Support
+
+* **Type stripping**: Removes TypeScript-specific syntax
+* **Decorator parsing**: Handles experimental decorators
+* **Namespace support**: Full module and namespace parsing
+* **JSX integration**: TypeScript + JSX (TSX) support
+
+### Research Areas
+
+* **SIMD text processing**: Vectorized string operations
+* **Cache optimization**: Minimize memory access patterns
+* **Branch prediction**: Optimize hot parsing paths
+* **Zero-copy parsing**: Eliminate unnecessary string copies
+
+[estree]: https://github.com/estree/estree
 
 ---
 
@@ -64932,6 +65406,119 @@ For what Oxfmt does support across frameworks and file types, see the [compatibi
 ---
 
 ---
+url: /docs/guide/usage/linter/generated-lsp-config.md
+---
+
+These options can be defined for each workspace folder separately.
+File references in the options (e.g. `configPath`, `tsConfigPath`) are resolved relative to the workspace folder.
+
+They can be sent by the client in `initialize` or `workspace/didChangeConfiguration` requests.
+If the client supports `workspace/configuration`, the server will request the options from the client.
+
+Example of `initialize` request:
+
+```json
+{
+  "processId": 123,
+  "rootUri": null,
+  "workspaceFolders": [],
+  "capabilities": {},
+  "initializationOptions": [
+    {
+      "workspaceUri": "file:///home/user/project",
+      "options": {
+        "unusedDisableDirectives": "deny",
+        "typeAware": true
+      }
+    }
+  ]
+}
+```
+
+Example of `workspace/didChangeConfiguration` request:
+
+```json
+{
+  "settings": [
+    {
+      "workspaceUri": "file:///home/user/project",
+      "options": {
+        "unusedDisableDirectives": "deny",
+        "disableNestedConfig": true
+      }
+    }
+  ]
+}
+```
+
+## configPath
+
+type: `string`
+
+Path to the config file. Similar to `--config` CLI option.
+If set, it disables searching for config files.
+
+## disableNestedConfig
+
+type: `boolean`
+
+Whether to disable nested config support. Similar to `--disable-nested-config` CLI option.
+It gets automatically enabled when `configPath` is set.
+
+## fixKind
+
+type: `"safe_fix" | "safe_fix_or_suggestion" | "dangerous_fix" | "dangerous_fix_or_suggestion" | "none" | "all"`
+
+What kind of fixes to generate for code actions.
+
+## rulesCustomization
+
+type: `Record<string, object>`
+
+Customization for individual rules, allows to override the linter's diagnostics and autofix.
+Example of lowering the severity of "no-unused-vars" rule to "hint" and disabling autofix for it:
+
+```json
+{
+  "rulesCustomization": {
+    "no-unused-vars": {
+      "severity": "hint",
+      "autofix": false
+    }
+  }
+}
+```
+
+## run
+
+type: `"onSave" | "onType"`
+
+If your editor does not support `textDocument/diagnostic`,
+this option handles when diagnostics are sent to the client.
+
+## tsConfigPath
+
+type: `string`
+
+Path to the tsconfig file. Similar to `--tsconfig` CLI option.
+If set, it disables auto discovery for tsconfig files.
+
+## typeAware
+
+type: `boolean`
+
+Whether to enable/disable type-aware linting.
+It will override the root config's `typeAware` option if set.
+
+## unusedDisableDirectives
+
+type: `"allow" | "warn" | "deny"`
+
+How to handle unused disable directives. By default, they are allowed and ignored.
+
+---
+
+---
 url: /docs/guide/usage/formatter/generated-cli.md
 ---
 
@@ -65113,6 +65700,10 @@ Arguments:
 
 * **`-f`**, **`--format`**=*`ARG`* —
   Use a specific output format. Possible values: `checkstyle`, `default`, `agent`, `github`, `gitlab`, `json`, `junit`, `sarif`, `stylish`, `unix`
+* **`    --debug`**=*`OPTIONS`* —
+  Enable debug output options. Options are comma-separated. Possible values:
+
+- `timings` - Enable per-rule timing information.
 
 ## Miscellaneous
 
@@ -65153,119 +65744,6 @@ Arguments:
   Prints help information
 * **`-V`**, **`--version`** —
   Prints version information
-
----
-
----
-url: /docs/guide/usage/linter/generated-lsp-config.md
----
-
-These options can be defined for each workspace folder separately.
-File references in the options (e.g. `configPath`, `tsConfigPath`) are resolved relative to the workspace folder.
-
-They can be sent by the client in `initialize` or `workspace/didChangeConfiguration` requests.
-If the client supports `workspace/configuration`, the server will request the options from the client.
-
-Example of `initialize` request:
-
-```json
-{
-  "processId": 123,
-  "rootUri": null,
-  "workspaceFolders": [],
-  "capabilities": {},
-  "initializationOptions": [
-    {
-      "workspaceUri": "file:///home/user/project",
-      "options": {
-        "unusedDisableDirectives": "deny",
-        "typeAware": true
-      }
-    }
-  ]
-}
-```
-
-Example of `workspace/didChangeConfiguration` request:
-
-```json
-{
-  "settings": [
-    {
-      "workspaceUri": "file:///home/user/project",
-      "options": {
-        "unusedDisableDirectives": "deny",
-        "disableNestedConfig": true
-      }
-    }
-  ]
-}
-```
-
-## configPath
-
-type: `string`
-
-Path to the config file. Similar to `--config` CLI option.
-If set, it disables searching for config files.
-
-## disableNestedConfig
-
-type: `boolean`
-
-Whether to disable nested config support. Similar to `--disable-nested-config` CLI option.
-It gets automatically enabled when `configPath` is set.
-
-## fixKind
-
-type: `"safe_fix" | "safe_fix_or_suggestion" | "dangerous_fix" | "dangerous_fix_or_suggestion" | "none" | "all"`
-
-What kind of fixes to generate for code actions.
-
-## rulesCustomization
-
-type: `Record<string, object>`
-
-Customization for individual rules, allows to override the linter's diagnostics and autofix.
-Example of lowering the severity of "no-unused-vars" rule to "hint" and disabling autofix for it:
-
-```json
-{
-  "rulesCustomization": {
-    "no-unused-vars": {
-      "severity": "hint",
-      "autofix": false
-    }
-  }
-}
-```
-
-## run
-
-type: `"onSave" | "onType"`
-
-If your editor does not support `textDocument/diagnostic`,
-this option handles when diagnostics are sent to the client.
-
-## tsConfigPath
-
-type: `string`
-
-Path to the tsconfig file. Similar to `--tsconfig` CLI option.
-If set, it disables auto discovery for tsconfig files.
-
-## typeAware
-
-type: `boolean`
-
-Whether to enable/disable type-aware linting.
-It will override the root config's `typeAware` option if set.
-
-## unusedDisableDirectives
-
-type: `"allow" | "warn" | "deny"`
-
-How to handle unused disable directives. By default, they are allowed and ignored.
 
 ---
 
